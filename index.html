@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compliance Review Tool</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg0:#fff;--bg1:#f5f5f3;--bg2:#ebebea;
+  --tx0:#1a1a1a;--tx1:#666;--tx2:#999;
+  --br0:rgba(0,0,0,0.08);--br1:rgba(0,0,0,0.15);--br2:rgba(0,0,0,0.25);
+  --r8:8px;--r12:12px;
+  --font:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg0:#1c1c1a;--bg1:#252523;--bg2:#2e2e2c;
+  --tx0:#f0efe8;--tx1:#a0a09a;--tx2:#666;
+  --br0:rgba(255,255,255,0.07);--br1:rgba(255,255,255,0.13);--br2:rgba(255,255,255,0.22);
+}}
+body{font-family:var(--font);font-size:14px;color:var(--tx0);background:var(--bg1);min-height:100vh}
+a{color:inherit}
+.hidden{display:none!important}
+
+/* ── Layout ── */
+.shell{display:grid;grid-template-columns:210px 1fr;grid-template-rows:auto 1fr;min-height:100vh}
+.topbar{grid-column:1/-1;background:var(--bg0);border-bottom:1px solid var(--br0);height:50px;display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:50}
+.topbar-logo{width:26px;height:26px;background:var(--tx0);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.topbar-logo svg{width:14px;height:14px;fill:var(--bg0)}
+.topbar-title{font-size:13px;font-weight:600;letter-spacing:-.01em}
+.topbar-sub{font-size:11px;color:var(--tx1);border-left:1px solid var(--br1);padding-left:10px;margin-left:4px}
+.topbar-right{margin-left:auto}
+.api-pill{font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid var(--br1);color:var(--tx1);background:transparent}
+.api-pill.ok{border-color:#5a9e3a;color:#3a7a1e;background:#eaf3de}
+@media(prefers-color-scheme:dark){.api-pill.ok{background:#173404;color:#8ecf5a;border-color:#3a7a1e}}
+
+.sidebar{background:var(--bg0);border-right:1px solid var(--br0);padding:12px 8px;display:flex;flex-direction:column}
+.nav-label{font-size:10px;font-weight:600;color:var(--tx2);letter-spacing:.06em;text-transform:uppercase;padding:10px 8px 4px}
+.nav-btn{width:100%;text-align:left;background:none;border:none;font-family:var(--font);font-size:13px;color:var(--tx1);padding:8px 10px;border-radius:var(--r8);cursor:pointer;display:flex;align-items:center;gap:8px}
+.nav-btn:hover{background:var(--bg1);color:var(--tx0)}
+.nav-btn.on{background:var(--bg1);color:var(--tx0);font-weight:500}
+.nav-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.nav-spacer{flex:1}
+.learn-box{border-top:1px solid var(--br0);padding:12px 10px 4px}
+.learn-title{font-size:11px;font-weight:500;color:var(--tx1);margin-bottom:5px}
+.learn-sub{font-size:11px;color:var(--tx2);margin-bottom:5px}
+.learn-track{height:3px;background:var(--bg2);border-radius:2px;margin-bottom:4px}
+.learn-fill{height:100%;border-radius:2px;background:#5a9e3a;transition:width .4s}
+
+/* ── Panel ── */
+.main{padding:20px;overflow-y:auto}
+.panel{background:var(--bg0);border:1px solid var(--br0);border-radius:var(--r12);overflow:hidden}
+.panel-head{padding:14px 18px;border-bottom:1px solid var(--br0);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.panel-title{font-size:14px;font-weight:600;flex:1}
+.panel-body{padding:18px}
+
+/* ── Buttons ── */
+.btn{padding:7px 14px;border-radius:var(--r8);border:1px solid var(--br1);background:transparent;color:var(--tx0);font-size:12px;font-family:var(--font);cursor:pointer}
+.btn:hover{background:var(--bg1)}
+.btn.primary{background:var(--tx0);color:var(--bg0);border-color:transparent}
+.btn.primary:hover{opacity:.85}
+.btn.sm{padding:5px 10px;font-size:11px}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ── Tabs ── */
+.tabs{display:flex;gap:2px;background:var(--bg1);padding:3px;border-radius:var(--r8)}
+.tab{padding:5px 12px;border-radius:6px;font-size:12px;font-family:var(--font);color:var(--tx1);background:none;border:none;cursor:pointer}
+.tab.on{background:var(--bg0);color:var(--tx0);font-weight:500}
+
+/* ── Form ── */
+.field{margin-bottom:14px}
+.field-label{font-size:11px;font-weight:500;color:var(--tx1);margin-bottom:5px}
+textarea,input[type=text],select{width:100%;font-family:var(--font);font-size:13px;color:var(--tx0);background:var(--bg0);border:1px solid var(--br1);border-radius:var(--r8);padding:8px 11px;outline:none}
+textarea{resize:vertical;line-height:1.6}
+textarea:focus,input[type=text]:focus,select:focus{border-color:var(--br2)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+.err-msg{font-size:12px;color:#a32d2d;background:#fcebeb;padding:8px 11px;border-radius:var(--r8);margin-top:8px}
+@media(prefers-color-scheme:dark){.err-msg{background:#3a1010;color:#f09090}}
+
+/* ── API setup banner ── */
+.setup-banner{background:var(--bg1);border:1px solid var(--br0);border-radius:var(--r12);padding:16px;margin-bottom:18px}
+.setup-title{font-size:13px;font-weight:600;margin-bottom:4px}
+.setup-desc{font-size:12px;color:var(--tx1);margin-bottom:10px;line-height:1.6}
+.setup-row{display:flex;gap:8px}
+.setup-row input{flex:1}
+.setup-note{font-size:11px;color:var(--tx2);margin-top:7px;line-height:1.5}
+
+/* ── Score banner ── */
+.score-banner{display:flex;align-items:center;gap:14px;padding:14px;background:var(--bg1);border-radius:var(--r12);border:1px solid var(--br0);margin-bottom:14px}
+.score-info{flex:1}
+.score-title{font-size:13px;font-weight:600;margin-bottom:3px}
+.score-sub{font-size:12px;color:var(--tx1);line-height:1.5}
+.fw-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.fw-tag{font-size:10px;padding:2px 7px;border-radius:20px;background:var(--bg0);border:1px solid var(--br0);color:var(--tx1)}
+
+/* ── Flags ── */
+.sec-title{font-size:10px;font-weight:600;color:var(--tx2);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+.flag{border:1px solid var(--br0);border-radius:var(--r8);margin-bottom:8px;overflow:hidden}
+.flag-hd{padding:10px 13px;display:flex;align-items:flex-start;gap:9px;cursor:pointer}
+.flag-hd:hover{background:var(--bg1)}
+.sev{font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;flex-shrink:0;margin-top:1px}
+.sev-H{background:#fcebeb;color:#a32d2d}
+.sev-M{background:#faeeda;color:#854f0b}
+.sev-L{background:#eaf3de;color:#3b6d11}
+@media(prefers-color-scheme:dark){
+  .sev-H{background:#3a1010;color:#f09090}
+  .sev-M{background:#3a2010;color:#f0b060}
+  .sev-L{background:#173404;color:#8ecf5a}
+}
+.flag-phrase{font-size:13px;font-weight:500;flex:1;line-height:1.4}
+.flag-rule{font-size:11px;color:var(--tx1);margin-top:2px}
+.flag-chev{font-size:11px;color:var(--tx2);flex-shrink:0}
+.flag-bd{display:none;padding:11px 13px;border-top:1px solid var(--br0);background:var(--bg1)}
+.flag-bd.open{display:block}
+.fix-label{font-size:10px;font-weight:600;color:var(--tx2);letter-spacing:.05em;text-transform:uppercase;margin-bottom:5px}
+.fix-box{background:var(--bg0);border:1px solid var(--br0);border-radius:var(--r8);padding:9px 11px;font-size:12px;line-height:1.6;margin-bottom:10px}
+.action-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.action-lbl{font-size:11px;color:var(--tx1)}
+.vbtn{padding:5px 11px;border-radius:var(--r8);border:1px solid var(--br1);font-size:11px;font-family:var(--font);background:transparent;color:var(--tx0);cursor:pointer}
+.vbtn:hover{background:var(--bg0)}
+.vbtn.flagged{background:#fcebeb;border-color:#f0b0b0;color:#a32d2d;font-weight:500}
+.vbtn.passed{background:#eaf3de;border-color:#a0cc80;color:#3b6d11;font-weight:500}
+@media(prefers-color-scheme:dark){
+  .vbtn.flagged{background:#3a1010;border-color:#7a2020;color:#f09090}
+  .vbtn.passed{background:#173404;border-color:#2a6010;color:#8ecf5a}
+}
+
+/* ── Precedent matches ── */
+.prec-matches{margin-bottom:14px;padding:11px 13px;background:var(--bg1);border-radius:var(--r8);border:1px solid var(--br0)}
+.prec-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.prec-chip{font-size:11px;padding:2px 8px;border-radius:20px;background:var(--bg0);border:1px solid var(--br1);color:var(--tx1)}
+
+/* ── Disposition bar ── */
+.disp-bar{display:flex;gap:8px;align-items:center;padding-top:14px;border-top:1px solid var(--br0);margin-top:14px;flex-wrap:wrap}
+.disp-lbl{font-size:13px;font-weight:500;white-space:nowrap}
+.dbtn{padding:5px 12px;border-radius:var(--r8);border:1px solid var(--br1);font-size:12px;font-family:var(--font);background:transparent;color:var(--tx0);cursor:pointer}
+.dbtn.active-fail{background:#fcebeb;border-color:#f0b0b0;color:#a32d2d;font-weight:600;box-shadow:0 0 0 2px #e24b4a}
+.dbtn.active-cond{background:#faeeda;border-color:#f0cc80;color:#854f0b;font-weight:600;box-shadow:0 0 0 2px #ef9f27}
+.dbtn.active-pass{background:#eaf3de;border-color:#a0cc80;color:#3b6d11;font-weight:600;box-shadow:0 0 0 2px #5a9e3a}
+
+/* ── Queue ── */
+.q-item{display:flex;align-items:center;gap:11px;padding:12px 16px;border-bottom:1px solid var(--br0);cursor:pointer}
+.q-item:last-child{border-bottom:none}
+.q-item:hover{background:var(--bg1)}
+.q-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.q-pend{background:var(--bg1);color:var(--tx1);border:1px solid var(--br1)}
+.q-pass{background:#eaf3de;color:#3b6d11}
+.q-cond{background:#faeeda;color:#854f0b}
+.q-fail{background:#fcebeb;color:#a32d2d}
+@media(prefers-color-scheme:dark){
+  .q-pass{background:#173404;color:#8ecf5a}
+  .q-cond{background:#3a2010;color:#f0b060}
+  .q-fail{background:#3a1010;color:#f09090}
+}
+.q-info{flex:1;min-width:0}
+.q-title{font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.q-meta{font-size:11px;color:var(--tx1);margin-top:2px}
+.q-flag{font-size:11px;white-space:nowrap}
+
+/* ── Metrics ── */
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.metric{background:var(--bg1);border-radius:var(--r8);padding:13px}
+.metric-val{font-size:22px;font-weight:600}
+.metric-lbl{font-size:11px;color:var(--tx1);margin-top:3px}
+
+/* ── Precedent cards ── */
+.prec-card{border:1px solid var(--br0);border-radius:var(--r8);padding:11px 13px;margin-bottom:8px}
+.prec-phrase{font-size:13px;font-style:italic;color:var(--tx1);margin-bottom:7px}
+.prec-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tag{font-size:10px;padding:2px 7px;border-radius:20px;background:var(--bg1);border:1px solid var(--br0);color:var(--tx1)}
+.prec-cnt{font-size:11px;color:var(--tx2)}
+.prec-rat{font-size:11px;color:var(--tx1);margin-left:auto}
+
+/* ── Help ── */
+.help-callout{background:var(--bg1);border-left:3px solid var(--br1);padding:11px 13px;border-radius:0 var(--r8) var(--r8) 0;margin-top:16px}
+.help-callout-title{font-size:12px;font-weight:600;margin-bottom:4px}
+.help-callout-body{font-size:12px;color:var(--tx1);line-height:1.65}
+.steps{display:flex;flex-direction:column;gap:13px}
+.step{display:flex;gap:12px;align-items:flex-start}
+.step-n{width:22px;height:22px;border-radius:50%;background:var(--bg1);border:1px solid var(--br1);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;margin-top:1px}
+.step-title{font-size:13px;font-weight:500;margin-bottom:3px}
+.step-desc{font-size:12px;color:var(--tx1);line-height:1.6}
+.rule-block{border:1px solid var(--br0);border-radius:var(--r12);margin-bottom:12px;overflow:hidden}
+.rule-block-hd{padding:12px 15px;background:var(--bg1);border-bottom:1px solid var(--br0)}
+.rule-block-title{font-size:13px;font-weight:600;margin-bottom:2px}
+.rule-block-sub{font-size:11px;color:var(--tx1)}
+.rule-block-body{padding:13px 15px;display:flex;flex-direction:column;gap:12px}
+.sub-rule{display:flex;gap:10px;align-items:flex-start}
+.sub-cite{font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;background:var(--bg1);border:1px solid var(--br0);color:var(--tx1);white-space:nowrap;flex-shrink:0;margin-top:1px;font-family:monospace}
+.sub-title{font-size:12px;font-weight:500;margin-bottom:2px}
+.sub-desc{font-size:12px;color:var(--tx1);line-height:1.6}
+.rule-items{display:flex;flex-direction:column;gap:9px;margin-bottom:14px}
+.rule-item{display:flex;gap:10px;align-items:flex-start;padding:11px;border:1px solid var(--br0);border-radius:var(--r8)}
+.rule-item-title{font-size:12px;font-weight:500;margin-bottom:2px}
+.rule-item-desc{font-size:12px;color:var(--tx1);line-height:1.6}
+
+/* ── Loading / empty ── */
+.loading{display:flex;align-items:center;gap:10px;padding:24px 18px;color:var(--tx1);font-size:13px}
+.spin{width:15px;height:15px;border:2px solid var(--br0);border-top-color:var(--tx1);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:28px;color:var(--tx1);font-size:13px}
+
+/* ── Toast ── */
+.toast{position:fixed;bottom:22px;right:22px;background:var(--tx0);color:var(--bg0);padding:9px 15px;border-radius:var(--r8);font-size:13px;z-index:999;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="topbar-logo">
+      <svg viewBox="0 0 14 14"><rect x="1" y="1" width="12" height="2"/><rect x="1" y="5" width="8" height="2"/><rect x="1" y="9" width="10" height="2"/></svg>
+    </div>
+    <span class="topbar-title">Compliance Review</span>
+    <span class="topbar-sub">FINRA 2210 · NFA 2-29</span>
+    
+  </header>
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="nav-label">Workflow</div>
+    <button class="nav-btn on" id="nb-submit" onclick="goTo('submit',this)">
+      <span class="nav-dot" style="background:#378add"></span>New submission
+    </button>
+    <button class="nav-btn" id="nb-queue" onclick="goTo('queue',this)">
+      <span class="nav-dot" style="background:#ef9f27"></span>Review queue
+      <span id="q-badge" style="margin-left:auto;font-size:10px;background:var(--bg2);padding:1px 6px;border-radius:20px">2</span>
+    </button>
+    <button class="nav-btn" id="nb-prec" onclick="goTo('prec',this)">
+      <span class="nav-dot" style="background:#5a9e3a"></span>Precedents
+    </button>
+    <button class="nav-btn" id="nb-help" onclick="goTo('help',this)">
+      <span class="nav-dot" style="background:#b4b2a9"></span>Help &amp; rules
+    </button>
+    <button class="nav-btn" id="nb-settings" onclick="goTo('settings',this)">
+      <span class="nav-dot" style="background:#7f77dd"></span>Settings
+    </button>
+    <div class="nav-spacer"></div>
+    <div class="learn-box">
+      <div class="learn-title">Model learning</div>
+      <div class="learn-sub" id="learn-stat">12 decisions logged</div>
+      <div class="learn-track"><div class="learn-fill" id="learn-bar" style="width:65%"></div></div>
+      <div class="learn-sub" id="learn-conf">65% auto-confidence</div>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- SUBMIT -->
+    <div id="v-submit" class="panel">
+      <div class="panel-head">
+        <div class="panel-title">New submission</div>
+        <div class="tabs">
+          <button class="tab on" id="tab-text" onclick="setMode('text',this)">Paste text</button>
+          <button class="tab" id="tab-url" onclick="setMode('url',this)">URL</button>
+          <button class="tab" id="tab-pdf" onclick="setMode('pdf',this)">PDF</button>
+        </div>
+      </div>
+      <div class="panel-body">
+                <div class="field">
+          <div class="field-label">Content to review</div>
+          <div id="wrap-text"><textarea id="txt-input" rows="9" placeholder="Paste marketing copy, email, social post, script, or web content here…"></textarea></div>
+          <div id="wrap-url" class="hidden"><input type="text" id="url-input" placeholder="https://…"><div class="setup-note" style="margin-top:6px">Paste page text in the field above as well for best results.</div></div>
+          <div id="wrap-pdf" class="hidden">
+            <div id="pdf-drop" style="border:1.5px dashed var(--br1);border-radius:var(--r8);padding:32px 20px;text-align:center;cursor:pointer;transition:background .15s" onclick="document.getElementById('pdf-file').click()" ondragover="event.preventDefault();this.style.background='var(--bg2)'" ondragleave="this.style.background=''" ondrop="handlePdfDrop(event)">
+              <div style="font-size:13px;font-weight:500;margin-bottom:4px">Drop PDF here or click to browse</div>
+              <div style="font-size:12px;color:var(--tx1)">Max 32 MB · PDF files only</div>
+            </div>
+            <input type="file" id="pdf-file" accept="application/pdf" style="display:none" onchange="handlePdfFile(this.files[0])">
+            <div id="pdf-status" class="hidden" style="margin-top:10px;padding:10px 13px;background:var(--bg1);border-radius:var(--r8);border:1px solid var(--br0);font-size:12px;display:flex;align-items:center;gap:10px">
+              <span id="pdf-name" style="flex:1;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
+              <span id="pdf-size" style="color:var(--tx1);flex-shrink:0"></span>
+              <button onclick="clearPdf()" style="background:none;border:none;cursor:pointer;color:var(--tx1);font-size:16px;line-height:1;padding:0 2px" title="Remove">&times;</button>
+            </div>
+          </div>
+        </div>
+        <div class="grid2">
+          <div class="field">
+            <div class="field-label">Asset class</div>
+            <select id="sel-asset">
+              <option value="securities">Securities (equities / ETFs)</option>
+              <option value="options">Options</option>
+              <option value="futures">Futures / commodities</option>
+              <option value="crypto">Crypto</option>
+              <option value="all" selected>All / multi-asset</option>
+            </select>
+          </div>
+          <div class="field">
+            <div class="field-label">Communication type</div>
+            <select id="sel-type">
+              <option value="retail-web">Retail — website / educational</option>
+              <option value="retail-email">Retail — email</option>
+              <option value="retail-social">Retail — social / ad</option>
+              <option value="institutional">Institutional</option>
+              <option value="retail-video">Retail — video script</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid2">
+          <div class="field">
+            <div class="field-label">Target audience</div>
+            <select id="sel-aud">
+              <option value="general">General public</option>
+              <option value="active">Active / experienced traders</option>
+              <option value="accredited">Accredited investors</option>
+            </select>
+          </div>
+          <div class="field">
+            <div class="field-label">Submitted by</div>
+            <input type="text" id="txt-submitter" placeholder="Name or team">
+          </div>
+        </div>
+        <button class="btn primary" style="width:100%" onclick="runAnalysis()">Analyze for compliance →</button>
+        <div id="submit-err" class="err-msg hidden"></div>
+      </div>
+    </div>
+
+    <!-- ANALYSIS -->
+    <div id="v-analysis" class="panel hidden">
+      <div class="panel-head">
+        <button class="btn sm" onclick="goTo('submit',document.getElementById('nb-submit'))">← Back</button>
+        <div class="panel-title" id="analysis-title">Analysis</div>
+        <button class="btn sm" onclick="addToQueue()">Add to queue</button>
+      </div>
+      <div class="panel-body">
+        <div id="loading-wrap" class="loading"><div class="spin"></div>Analyzing against FINRA 2210, NFA 2-29, and firm precedents…</div>
+        <div id="analysis-wrap" class="hidden">
+          <div class="score-banner">
+            <svg width="54" height="54" viewBox="0 0 54 54" style="flex-shrink:0">
+              <circle cx="27" cy="27" r="22" fill="none" stroke="var(--br0)" stroke-width="4"/>
+              <circle id="arc" cx="27" cy="27" r="22" fill="none" stroke="#5a9e3a" stroke-width="4" stroke-linecap="round" stroke-dasharray="0 138.2" transform="rotate(-90 27 27)" style="transition:stroke-dasharray .6s,stroke .4s"/>
+              <text id="arc-num" x="27" y="32" text-anchor="middle" font-size="13" font-weight="600" fill="var(--tx0)">—</text>
+            </svg>
+            <div class="score-info">
+              <div class="score-title" id="score-title">Analyzing…</div>
+              <div class="score-sub" id="score-sub"></div>
+              <div class="fw-tags" id="fw-tags"></div>
+            </div>
+          </div>
+          <div id="prec-match-wrap" class="prec-matches hidden">
+            <div class="sec-title" style="margin:0">Similar past decisions</div>
+            <div class="prec-chips" id="prec-chips"></div>
+          </div>
+          <div class="sec-title">Flagged items</div>
+          <div id="flags-wrap"></div>
+          <div class="disp-bar">
+            <span class="disp-lbl">Disposition:</span>
+            <button class="dbtn" id="db-fail" onclick="setDisp('fail',this)">Fail</button>
+            <button class="dbtn" id="db-cond" onclick="setDisp('cond',this)">Conditional pass</button>
+            <button class="dbtn" id="db-pass" onclick="setDisp('pass',this)">Pass</button>
+            <input type="text" id="disp-note" placeholder="Reviewer note (optional)" style="flex:1;min-width:160px;font-size:12px;padding:6px 10px">
+            <button class="btn sm primary" onclick="submitDisp()">Submit →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUEUE -->
+    <div id="v-queue" class="panel hidden">
+      <div class="panel-head">
+        <div class="panel-title">Review queue</div>
+        <div style="font-size:12px;color:var(--tx1)" id="q-meta"></div>
+      </div>
+      <div id="q-list"></div>
+    </div>
+
+    <!-- PRECEDENTS -->
+    <div id="v-prec" class="panel hidden">
+      <div class="panel-head">
+        <div class="panel-title">Precedent library</div>
+        <div style="font-size:12px;color:var(--tx1)">Learned from compliance decisions</div>
+      </div>
+      <div class="panel-body">
+        <div class="metrics">
+          <div class="metric"><div class="metric-val" id="p-total">—</div><div class="metric-lbl">Total decisions</div></div>
+          <div class="metric"><div class="metric-val" id="p-flagged">—</div><div class="metric-lbl">Flagged patterns</div></div>
+          <div class="metric"><div class="metric-val" id="p-passed">—</div><div class="metric-lbl">Passed patterns</div></div>
+        </div>
+        <div class="sec-title">Flagged language</div>
+        <div id="list-flagged"></div>
+        <div class="sec-title" style="margin-top:16px">Passed language</div>
+        <div id="list-passed"></div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="v-settings" class="panel hidden">
+      <div class="panel-head"><div class="panel-title">Settings</div></div>
+      <div class="panel-body">
+        <div class="field" style="margin-top:6px">
+          <div class="field-label">Reset precedent library</div>
+          <button class="btn" onclick="resetPrec()">Reset to defaults</button>
+          <div class="setup-note" style="margin-top:6px">Clears all learned decisions and restores default examples.</div>
+        </div>
+        <div class="field" style="margin-top:6px">
+          <div class="field-label">Export decisions</div>
+          <button class="btn" onclick="exportData()">Export JSON</button>
+          <div class="setup-note" style="margin-top:6px">Downloads all precedents and queue history for audit records.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HELP -->
+    <div id="v-help" class="panel hidden">
+      <div class="panel-head">
+        <div class="panel-title">Help &amp; regulatory rules</div>
+        <div class="tabs">
+          <button class="tab on" id="ht-mkt" onclick="helpTab('mkt',this)">For marketing</button>
+          <button class="tab" id="ht-comp" onclick="helpTab('comp',this)">For compliance</button>
+          <button class="tab" id="ht-rules" onclick="helpTab('rules',this)">Rules reference</button>
+        </div>
+      </div>
+      <div class="panel-body">
+
+        <div id="h-mkt">
+          <p style="font-size:13px;color:var(--tx1);line-height:1.7;margin-bottom:16px">This tool uses AI to pre-screen marketing content against FINRA Rule 2210 and NFA Rule 2-29 before it reaches the compliance team. It flags language that may require revision and explains why — saving review cycles for both sides.</p>
+          <div class="sec-title">How to submit</div>
+          <div class="steps">
+            <div class="step"><div class="step-n">1</div><div><div class="step-title">Paste your content</div><div class="step-desc">Copy your draft — email, web copy, social post, video script, or ad — and paste it into the text field. For a URL, use the URL tab and also paste the page text for best results.</div></div></div>
+            <div class="step"><div class="step-n">2</div><div><div class="step-title">Set context fields</div><div class="step-desc">Select the correct asset class, communication type, and audience. These change which rules the AI applies — retail social ads are reviewed more strictly than institutional pieces, and options content triggers additional requirements.</div></div></div>
+            <div class="step"><div class="step-n">3</div><div><div class="step-title">Run the analysis</div><div class="step-desc">Click Analyze. The tool returns a compliance score (0–100), flagged items with the specific rule violated, and a suggested rewrite for each issue. Takes 5–15 seconds.</div></div></div>
+            <div class="step"><div class="step-n">4</div><div><div class="step-title">Review flags and send</div><div class="step-desc">Expand each flag to read the issue and suggested fix. Address high-severity items before submitting. Then click Add to queue — compliance will pick it up and issue a final disposition.</div></div></div>
+          </div>
+          <div class="sec-title" style="margin-top:20px">Common reasons content gets flagged</div>
+          <div class="rule-items">
+            <div class="rule-item"><span class="sev sev-H">HIGH</span><div><div class="rule-item-title">Performance claims without balance</div><div class="rule-item-desc">Saying a strategy "outperforms" or has "higher returns" without equal-prominence risk disclosure. Fix: add a risk caveat in the same sentence or immediately adjacent.</div></div></div>
+            <div class="rule-item"><span class="sev sev-H">HIGH</span><div><div class="rule-item-title">Predictive language</div><div class="rule-item-desc">Phrases like "will increase," "is likely to rise," or "signals an upward move." Fix: use "may," "historically," or "some traders believe."</div></div></div>
+            <div class="rule-item"><span class="sev sev-M">MED</span><div><div class="rule-item-title">Superlatives and unsupported comparisons</div><div class="rule-item-desc">"Highly effective," "best approach," or "superior risk/reward" without supporting data. Fix: soften to "one approach" or "can be effective."</div></div></div>
+            <div class="rule-item"><span class="sev sev-M">MED</span><div><div class="rule-item-title">Missing or buried risk disclosure</div><div class="rule-item-desc">Risk language only in fine print doesn't satisfy FINRA's "clear and prominent" standard. Fix: add a risk callout near the top of the piece.</div></div></div>
+            <div class="rule-item"><span class="sev sev-L">LOW</span><div><div class="rule-item-title">Promotional framing in educational content</div><div class="rule-item-desc">Phrases like "opportunities others don't see" blur the line between education and promotion. Fix: use neutral, descriptive language.</div></div></div>
+          </div>
+          <div class="help-callout">
+            <div class="help-callout-title">Important</div>
+            <div class="help-callout-body">A passing AI score is not final approval. All content still requires a compliance reviewer's disposition before publication. The AI pre-screen reduces back-and-forth but does not replace the Principal review required under FINRA and NFA rules.</div>
+          </div>
+        </div>
+
+        <div id="h-comp" class="hidden">
+          <p style="font-size:13px;color:var(--tx1);line-height:1.7;margin-bottom:16px">The tool sends submitted content to Claude (Anthropic) via API along with your firm's precedent library and the applicable regulatory framework. Every compliance decision you make is fed back into the precedent library and used to calibrate future analyses.</p>
+          <div class="sec-title">Review workflow</div>
+          <div class="steps">
+            <div class="step"><div class="step-n">1</div><div><div class="step-title">Pick up items from the queue</div><div class="step-desc">The Review Queue tab shows all pending submissions with their AI score and flag count. Higher flag counts and lower scores warrant closer scrutiny.</div></div></div>
+            <div class="step"><div class="step-n">2</div><div><div class="step-title">Review the AI analysis</div><div class="step-desc">Each flagged phrase is mapped to a specific rule with a suggested fix. The Precedent Matches section shows if any language has been reviewed before — and how it was previously treated.</div></div></div>
+            <div class="step"><div class="step-n">3</div><div><div class="step-title">Make per-flag decisions</div><div class="step-desc">Expand each flag and choose: Keep flagged (confirms the finding, adds to flagged patterns) or Mark acceptable (overrides the AI, saves as approved pattern). These decisions train the model.</div></div></div>
+            <div class="step"><div class="step-n">4</div><div><div class="step-title">Issue a disposition</div><div class="step-desc">Select Pass, Conditional Pass, or Fail. Add a reviewer note to document your rationale — this becomes part of the audit trail.</div></div></div>
+            <div class="step"><div class="step-n">5</div><div><div class="step-title">The model learns</div><div class="step-desc">Every flag decision updates the Precedent Library. Future submissions are scored against this growing library — reducing false positives over time.</div></div></div>
+          </div>
+          <div class="sec-title" style="margin-top:20px">Disposition standards</div>
+          <div class="rule-items">
+            <div class="rule-item"><span class="sev sev-L">PASS</span><div><div class="rule-item-title">Content is compliant as submitted</div><div class="rule-item-desc">No material issues under FINRA 2210 or NFA 2-29. Content may be published without revision.</div></div></div>
+            <div class="rule-item"><span class="sev sev-M">COND</span><div><div class="rule-item-title">Compliant with specified revisions</div><div class="rule-item-desc">One or more issues must be addressed before publication. Use the reviewer note to specify required changes. Marketing must resubmit for final approval after revisions.</div></div></div>
+            <div class="rule-item"><span class="sev sev-H">FAIL</span><div><div class="rule-item-title">Material compliance issues present</div><div class="rule-item-desc">Content contains violations that cannot be addressed with minor edits — e.g., prohibited performance guarantees, missing required disclosures, or content not suitable for the stated audience. Full rewrite required.</div></div></div>
+          </div>
+          <div class="help-callout">
+            <div class="help-callout-title">Recordkeeping note</div>
+            <div class="help-callout-body">Use Export JSON in Settings to archive all decisions periodically. This supplements your firm's required books and records under FINRA Rule 4511 and NFA Compliance Rule 2-10. This tool does not substitute for your firm's existing principal approval recordkeeping system.</div>
+          </div>
+        </div>
+
+        <div id="h-rules" class="hidden">
+          <p style="font-size:13px;color:var(--tx1);line-height:1.7;margin-bottom:18px">This tool applies the following regulatory frameworks. The AI maps every flag to a specific rule citation.</p>
+
+          <div class="rule-block">
+            <div class="rule-block-hd"><div class="rule-block-title">FINRA Rule 2210 — Communications with the public</div><div class="rule-block-sub">Applies to: securities, options, ETFs · Retail and institutional</div></div>
+            <div class="rule-block-body">
+              <div class="sub-rule"><span class="sub-cite">2210(d)(1)</span><div><div class="sub-title">General standards</div><div class="sub-desc">Content must be fair, balanced, and not contain any false, exaggerated, unwarranted, promissory, or misleading statement. Flags: superlatives without substantiation, promissory language, claims implying certainty about future performance.</div></div></div>
+              <div class="sub-rule"><span class="sub-cite">2210(d)(1)(B)</span><div><div class="sub-title">Risk disclosure — prominence</div><div class="sub-desc">When a communication discusses potential rewards, it must give fair and balanced treatment to associated risks with equal prominence. Risk buried in footnotes alone does not satisfy this requirement for retail communications.</div></div></div>
+              <div class="sub-rule"><span class="sub-cite">2210(d)(2)</span><div><div class="sub-title">Performance data</div><div class="sub-desc">Past performance must not imply future results. Required time periods apply (1-year, 5-year, 10-year, since inception). Flags any performance figure not accompanied by the standard disclaimer.</div></div></div>
+              <div class="sub-rule"><span class="sub-cite">2210(d)(7)</span><div><div class="sub-title">Comparisons</div><div class="sub-desc">Comparisons between products or strategies must be fair and all material differences must be disclosed. Flags comparative claims that lack substantiation or omit material differences.</div></div></div>
+              <div class="sub-rule"><span class="sub-cite">2210(c)</span><div><div class="sub-title">Principal review</div><div class="sub-desc">Retail communications must be reviewed and approved by a registered principal prior to use. This tool's AI analysis supports but does not satisfy that requirement.</div></div></div>
+            </div>
+          </div>
+
+          <div class="rule-block">
+            <div class="rule-block-hd"><div class="rule-block-title">FINRA Rule 2220 — Options communications</div><div class="rule-block-sub">Applies to: options · Retail</div></div>
+            <div class="rule-block-body">
+              <div class="sub-rule"><span class="sub-cite">2220(b)</span><div><div class="sub-title">ODD delivery obligation</div><div class="sub-desc">Any retail communication promoting options trading must reference the Characteristics and Risks of Standardized Options (ODD) and provide or link to it.</div></div></div>
+              <div class="sub-rule"><span class="sub-cite">2220(c)</span><div><div class="sub-title">Suitability language</div><div class="sub-desc">Options communications must state that options are not suitable for all investors and may expose investors to potentially significant losses.</div></div></div>
+            </div>
+          </div>
+
+          <div class="rule-block">
+            <div class="rule-block-hd"><div class="rule-block-title">NFA Compliance Rule 2-29 — Communications with the public</div><div class="rule-block-sub">Applies to: futures, commodities, forex · Retail and institutional</div></div>
+            <div class="rule-block-body">
+              <div class="sub-rule"><span class="sub-cite">2-29(b)</span><div><div class="sub-title">Fair and balanced</div><div class="sub-desc">Same core standard as FINRA 2210(d)(1). Applied to all futures and forex content regardless of whether FINRA also applies.</div></div></div>
+              <div class="sub-rule"><span class="sub-cite">2-29(b)(1)</span><div><div class="sub-title">Hypothetical performance disclaimer</div><div class="sub-desc">Any hypothetical or simulated performance result must include the NFA's mandated verbatim disclaimer. The tool flags any hypothetical figure missing this language.</div></div></div>
+              <div class="sub-rule"><span class="sub-cite">2-29(b)(2)</span><div><div class="sub-title">Prominence of risk disclosure</div><div class="sub-desc">Risk disclosure must appear on the same page as, and in close proximity to, any promotional claims. Footer-only disclosure is insufficient under NFA review.</div></div></div>
+              <div class="sub-rule"><span class="sub-cite">2-29(c)</span><div><div class="sub-title">Testimonials</div><div class="sub-desc">Testimonials must disclose whether the speaker is a customer and whether they were compensated. Flags any quote or endorsement missing these disclosures.</div></div></div>
+            </div>
+          </div>
+
+          <div class="rule-block">
+            <div class="rule-block-hd"><div class="rule-block-title">Crypto — applicable frameworks</div><div class="rule-block-sub">Applies to: digital assets · Regulatory status: evolving</div></div>
+            <div class="rule-block-body">
+              <div class="sub-rule"><span class="sub-cite">FINRA 2210</span><div><div class="sub-title">If offered through a FINRA broker-dealer</div><div class="sub-desc">Crypto communications are treated as retail communications under Rule 2210. FINRA Regulatory Notice 22-08 emphasizes that promotional content must not overstate potential gains or understate risks including total loss of principal.</div></div></div>
+              <div class="sub-rule"><span class="sub-cite">SEC / Howey</span><div><div class="sub-title">"Earn," yield, and staking language</div><div class="sub-desc">Language promoting crypto yield, staking rewards, or "earn" programs may imply a security under the Howey test. Flagged for compliance review given ongoing regulatory uncertainty.</div></div></div>
+              <div class="sub-rule"><span class="sub-cite">General</span><div><div class="sub-title">Total loss disclosure</div><div class="sub-desc">Crypto communications must disclose that the value of any cryptocurrency may go to zero, including stablecoins pegged to fiat currency or commodities.</div></div></div>
+            </div>
+          </div>
+
+          <div class="rule-block">
+            <div class="rule-block-hd"><div class="rule-block-title">Influencer &amp; third-party content</div><div class="rule-block-sub">Applies to: all asset classes · Retail</div></div>
+            <div class="rule-block-body">
+              <div class="sub-rule"><span class="sub-cite">FINRA 2210</span><div><div class="sub-title">Adopted communications</div><div class="sub-desc">If the firm endorses, shares, reposts, or links to third-party content, that content becomes an "adopted communication" and must comply with the same standards as firm-produced content. Compensation to influencers must be disclosed.</div></div></div>
+              <div class="sub-rule"><span class="sub-cite">SEC 206(4)-1</span><div><div class="sub-title">Testimonials and endorsements</div><div class="sub-desc">Requires disclosure of material conflicts, compensation, and whether the endorser is a client. The spirit of this rule is applied by FINRA examiners to broker-dealer testimonial content.</div></div></div>
+            </div>
+          </div>
+
+          <div class="help-callout">
+            <div class="help-callout-title">Disclaimer</div>
+            <div class="help-callout-body">This tool assists compliance review and does not constitute legal advice. Rule interpretations are based on published FINRA and NFA guidance current as of early 2026. Regulations change — always verify against the current rulebook and consult qualified legal counsel for material questions.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────
+var SK = 'cr_v3';
+var curAnalysis = null;
+var curContent  = '';
+var curMeta     = {};
+var curDisp     = null;
+
+function defaultState() {
+  var d = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  return {
+    queue: [
+      {id:'q1',title:'Trend Trading educational article',submitter:'Marketing',type:'retail-web',asset:'all',status:'pending',score:62,flags:3,date:d},
+      {id:'q2',title:'Options basics email campaign',submitter:'Marketing',type:'retail-email',asset:'options',status:'pending',score:78,flags:2,date:d}
+    ],
+    precedents: {
+      flagged: [
+        {phrase:'highly effective',rule:'FINRA 2210(d)(1)',count:4,rationale:'Superlative implying unsubstantiated reliability'},
+        {phrase:'increased likelihood',rule:'FINRA 2210(d)(1)',count:3,rationale:'Predictive claim without statistical basis'},
+        {phrase:"opportunities others don't see",rule:'FINRA 2210(d)(1)',count:2,rationale:'Implies informational advantage'},
+        {phrase:'risk/reward ratios are higher',rule:'FINRA 2210(d)(1)',count:2,rationale:'Unsubstantiated comparative claim'}
+      ],
+      passed: [
+        {phrase:'trading involves risk of loss',rule:'General',count:8,rationale:'Standard risk disclosure language'},
+        {phrase:'not suitable for all investors',rule:'FINRA 2210',count:6,rationale:'Appropriate suitability caveat'},
+        {phrase:'pros and cons',rule:'FINRA 2210',count:4,rationale:'Balanced treatment'}
+      ]
+    },
+    decisions: 12
+  };
+}
+
+function loadState() {
+  try {
+    var s = localStorage.getItem(SK);
+    return s ? JSON.parse(s) : defaultState();
+  } catch(e) { return defaultState(); }
+}
+
+function saveState() {
+  try { localStorage.setItem(SK, JSON.stringify(state)); } catch(e) {}
+}
+
+var state = loadState();
+
+// ── Helpers ────────────────────────────────────────────────────
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 2400);
+}
+
+function today() {
+  return new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+
+// ── Navigation ─────────────────────────────────────────────────
+function goTo(v, btn) {
+  var views = ['submit','analysis','queue','prec','settings','help'];
+  for (var i=0; i<views.length; i++) {
+    document.getElementById('v-'+views[i]).classList.add('hidden');
+  }
+  document.getElementById('v-'+v).classList.remove('hidden');
+
+  document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('on'); });
+  if (btn) btn.classList.add('on');
+
+  if (v === 'queue')    renderQueue();
+  if (v === 'prec')     renderPrec();
+}
+
+// ── Input mode ─────────────────────────────────────────────────
+var pdfB64 = null;
+var pdfName = '';
+
+function setMode(mode, btn) {
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('on'); });
+  btn.classList.add('on');
+  document.getElementById('wrap-text').classList.toggle('hidden', mode !== 'text');
+  document.getElementById('wrap-url').classList.toggle('hidden', mode !== 'url');
+  document.getElementById('wrap-pdf').classList.toggle('hidden', mode !== 'pdf');
+}
+
+function handlePdfDrop(e) {
+  e.preventDefault();
+  document.getElementById('pdf-drop').style.background = '';
+  var file = e.dataTransfer.files[0];
+  if (file) handlePdfFile(file);
+}
+
+function handlePdfFile(file) {
+  if (!file) return;
+  if (file.type !== 'application/pdf') { toast('Please upload a PDF file'); return; }
+  if (file.size > 32 * 1024 * 1024) { toast('File too large — max 32 MB'); return; }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    pdfB64 = e.target.result.split(',')[1];
+    pdfName = file.name;
+    document.getElementById('pdf-name').textContent = file.name;
+    document.getElementById('pdf-size').textContent = (file.size / 1024).toFixed(0) + ' KB';
+    document.getElementById('pdf-status').classList.remove('hidden');
+    document.getElementById('pdf-drop').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearPdf() {
+  pdfB64 = null;
+  pdfName = '';
+  document.getElementById('pdf-file').value = '';
+  document.getElementById('pdf-status').classList.add('hidden');
+  document.getElementById('pdf-drop').style.display = '';
+}
+
+// ── Help tabs ──────────────────────────────────────────────────
+function helpTab(tab, btn) {
+  ['mkt','comp','rules'].forEach(function(t){
+    document.getElementById('h-'+t).classList.add('hidden');
+    document.getElementById('ht-'+t).classList.remove('on');
+  });
+  document.getElementById('h-'+tab).classList.remove('hidden');
+  btn.classList.add('on');
+}
+
+// API key handled server-side
+
+function clearKey() {
+  localStorage.removeItem('cr_key');
+    toast('API key cleared');
+}
+
+function refreshKeyStatus() {
+  var key = getKey();
+}
+
+// ── Learn stats ────────────────────────────────────────────────
+function refreshLearn() {
+  var d = state.decisions;
+  var conf = Math.min(95, 50 + Math.floor(d / 2));
+  document.getElementById('learn-stat').textContent = d + ' decisions logged';
+  document.getElementById('learn-bar').style.width = conf + '%';
+  document.getElementById('learn-conf').textContent = conf + '% auto-confidence';
+}
+
+function refreshQBadge() {
+  var n = state.queue.filter(function(q){ return q.status === 'pending'; }).length;
+  document.getElementById('q-badge').textContent = n;
+}
+
+// ── Analysis ───────────────────────────────────────────────────
+function runAnalysis() {
+  var text    = document.getElementById('txt-input').value.trim();
+  var url     = document.getElementById('url-input').value.trim();
+  var errEl   = document.getElementById('submit-err');
+  var isPdf   = !document.getElementById('wrap-pdf').classList.contains('hidden');
+
+  if (isPdf && !pdfB64) {
+    errEl.textContent = 'Please upload a PDF file.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  if (!isPdf && !text && !url) {
+    errEl.textContent = 'Please paste content or enter a URL.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  errEl.classList.add('hidden');
+
+  curContent  = isPdf ? '[PDF: ' + pdfName + ']' : (text || url);
+  curDisp     = null;
+  curAnalysis = null;
+  curMeta = {
+    asset:     document.getElementById('sel-asset').value,
+    type:      document.getElementById('sel-type').value,
+    audience:  document.getElementById('sel-aud').value,
+    submitter: document.getElementById('txt-submitter').value || 'Marketing'
+  };
+
+  ['fail','cond','pass'].forEach(function(d){
+    document.getElementById('db-'+d).className = 'dbtn';
+  });
+  document.getElementById('disp-note').value = '';
+  document.getElementById('analysis-title').textContent = isPdf ? pdfName : (curContent.substring(0,45) + (curContent.length > 45 ? '…' : ''));
+
+  goTo('analysis', null);
+  document.getElementById('loading-wrap').classList.remove('hidden');
+  document.getElementById('analysis-wrap').classList.add('hidden');
+
+  var flagged = state.precedents.flagged.map(function(p){ return p.phrase; }).join('; ') || 'none yet';
+  var passed  = state.precedents.passed.map(function(p){ return p.phrase; }).join('; ')  || 'none yet';
+
+  var instructions = 'You are a securities compliance reviewer at a US broker-dealer registered with FINRA and NFA.\n\n'
+    + 'Review this marketing/educational content for compliance issues under FINRA Rule 2210 and NFA Rule 2-29.\n\n'
+    + 'FIRM PRECEDENTS — always flag these:\n' + flagged + '\n\n'
+    + 'FIRM PRECEDENTS — treat as acceptable:\n' + passed + '\n\n'
+    + 'Asset class: ' + curMeta.asset + '\n'
+    + 'Communication type: ' + curMeta.type + '\n'
+    + 'Audience: ' + curMeta.audience + '\n'
+    + '\nRespond ONLY with a valid JSON object, no markdown fences, no extra text:\n'
+    + '{"score":<0-100>,"verdict":"<PASS|CONDITIONAL_PASS|FAIL>","summary":"<one sentence>","frameworks":["FINRA 2210"],"flags":[{"severity":"<HIGH|MEDIUM|LOW>","phrase":"<text>","rule":"<cite>","issue":"<brief>","suggestion":"<rewrite>"}],"precedent_matches":["<phrase>"]}';
+
+  var msgContent;
+  if (isPdf) {
+    msgContent = [
+      { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: pdfB64 } },
+      { type: 'text', text: instructions }
+    ];
+  } else {
+    var bodyText = (text || url).substring(0, 3000);
+    msgContent = [{ type: 'text', text: instructions + '\n\nCONTENT:\n' + bodyText }];
+  }
+
+  fetch('/api/analyze', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1200,
+      messages: [{ role: 'user', content: msgContent }]
+    })
+  })
+  .then(function(r) {
+    if (!r.ok) return r.json().then(function(e){ throw new Error(e.error && e.error.message ? e.error.message : 'API error ' + r.status); });
+    return r.json();
+  })
+  .then(function(d) {
+    var txt = '';
+    if (d.content) {
+      for (var i=0; i<d.content.length; i++) {
+        if (d.content[i].type === 'text') { txt = d.content[i].text; break; }
+      }
+    }
+    var clean = txt.replace(/```json|```/g,'').trim();
+    var a = JSON.parse(clean);
+    curAnalysis = a;
+    renderAnalysis(a);
+  })
+  .catch(function(err) {
+    document.getElementById('loading-wrap').innerHTML = '<div style="color:#a32d2d;font-size:13px;padding:4px 0">Analysis failed: ' + esc(err.message) + '. Check your API key in Settings.</div>';
+  });
+}
+
+function renderAnalysis(a) {
+  document.getElementById('loading-wrap').classList.add('hidden');
+  document.getElementById('analysis-wrap').classList.remove('hidden');
+
+  var score = Math.min(100, Math.max(0, a.score || 50));
+  var circ  = 2 * Math.PI * 22;
+  var dash  = (score / 100) * circ;
+  var arc   = document.getElementById('arc');
+  arc.setAttribute('stroke-dasharray', dash.toFixed(1) + ' ' + circ.toFixed(1));
+  arc.setAttribute('stroke', score >= 70 ? '#5a9e3a' : score >= 45 ? '#ef9f27' : '#e24b4a');
+  document.getElementById('arc-num').textContent = score;
+
+  var verdict = a.verdict || '';
+  document.getElementById('score-title').textContent =
+    verdict === 'PASS'             ? 'Pass — compliant' :
+    verdict === 'CONDITIONAL_PASS' ? 'Conditional pass — revisions needed' :
+                                     'Fail — requires revision';
+  document.getElementById('score-sub').textContent = a.summary || '';
+
+  var fw = a.frameworks || ['FINRA 2210'];
+  document.getElementById('fw-tags').innerHTML = fw.map(function(f){
+    return '<span class="fw-tag">' + esc(f) + '</span>';
+  }).join('');
+
+  if (a.precedent_matches && a.precedent_matches.length) {
+    document.getElementById('prec-match-wrap').classList.remove('hidden');
+    document.getElementById('prec-chips').innerHTML = a.precedent_matches.map(function(p){
+      return '<span class="prec-chip">' + esc(p) + '</span>';
+    }).join('');
+  } else {
+    document.getElementById('prec-match-wrap').classList.add('hidden');
+  }
+
+  var fw2 = document.getElementById('flags-wrap');
+  if (!a.flags || !a.flags.length) {
+    fw2.innerHTML = '<div class="empty">No issues found — content appears compliant.</div>';
+  } else {
+    fw2.innerHTML = a.flags.map(function(f, i) {
+      var sc = f.severity === 'HIGH' ? 'sev-H' : f.severity === 'MEDIUM' ? 'sev-M' : 'sev-L';
+      return '<div class="flag">'
+        + '<div class="flag-hd" onclick="toggleFlag(' + i + ')">'
+        + '<span class="sev ' + sc + '">' + esc(f.severity) + '</span>'
+        + '<div style="flex:1"><div class="flag-phrase">&ldquo;' + esc(f.phrase) + '&rdquo;</div>'
+        + '<div class="flag-rule">' + esc(f.rule) + ' &mdash; ' + esc(f.issue) + '</div></div>'
+        + '<span class="flag-chev" id="chev-' + i + '">&#9662;</span></div>'
+        + '<div class="flag-bd" id="fbd-' + i + '">'
+        + '<div class="fix-label">Suggested rewrite</div>'
+        + '<div class="fix-box">' + esc(f.suggestion) + '</div>'
+        + '<div class="action-row"><span class="action-lbl">Decision:</span>'
+        + '<button class="vbtn" id="vf-' + i + '" onclick="logDecision(' + i + ',\'flagged\')">&#128681; Keep flagged</button>'
+        + '<button class="vbtn" id="vp-' + i + '" onclick="logDecision(' + i + ',\'passed\')">&#10003; Mark acceptable</button>'
+        + '</div></div></div>';
+    }).join('');
+  }
+}
+
+function toggleFlag(i) {
+  var bd = document.getElementById('fbd-' + i);
+  var ch = document.getElementById('chev-' + i);
+  var open = bd.classList.toggle('open');
+  if (ch) ch.style.transform = open ? 'rotate(180deg)' : '';
+}
+
+function logDecision(i, verdict) {
+  if (!curAnalysis || !curAnalysis.flags) return;
+  var flag = curAnalysis.flags[i];
+  if (!flag) return;
+  var vf = document.getElementById('vf-' + i);
+  var vp = document.getElementById('vp-' + i);
+  if (verdict === 'flagged') {
+    if (vf) vf.className = 'vbtn flagged';
+    if (vp) vp.className = 'vbtn';
+    var ex = null;
+    for (var j=0; j<state.precedents.flagged.length; j++) {
+      if (state.precedents.flagged[j].phrase === flag.phrase) { ex = state.precedents.flagged[j]; break; }
+    }
+    if (ex) { ex.count++; } else { state.precedents.flagged.push({phrase:flag.phrase,rule:flag.rule,count:1,rationale:flag.issue}); }
+  } else {
+    if (vp) vp.className = 'vbtn passed';
+    if (vf) vf.className = 'vbtn';
+    var ex2 = null;
+    for (var k=0; k<state.precedents.passed.length; k++) {
+      if (state.precedents.passed[k].phrase === flag.phrase) { ex2 = state.precedents.passed[k]; break; }
+    }
+    if (ex2) { ex2.count++; } else { state.precedents.passed.push({phrase:flag.phrase,rule:flag.rule,count:1,rationale:'Marked acceptable by compliance'}); }
+  }
+  state.decisions++;
+  refreshLearn();
+  saveState();
+  toast(verdict === 'flagged' ? 'Added to flagged patterns' : 'Marked acceptable — precedent saved');
+}
+
+function setDisp(d, btn) {
+  curDisp = d;
+  document.getElementById('db-fail').className = 'dbtn';
+  document.getElementById('db-cond').className = 'dbtn';
+  document.getElementById('db-pass').className = 'dbtn';
+  btn.className = 'dbtn active-' + d;
+}
+
+function submitDisp() {
+  if (!curDisp) { toast('Select a disposition first'); return; }
+  var note = document.getElementById('disp-note').value.trim();
+  var item = {
+    id:        'q' + Date.now(),
+    title:     curContent.substring(0, 50) + (curContent.length > 50 ? '…' : ''),
+    submitter: curMeta.submitter || 'Marketing',
+    type:      curMeta.type,
+    asset:     curMeta.asset,
+    status:    curDisp,
+    score:     curAnalysis ? curAnalysis.score : 0,
+    flags:     curAnalysis && curAnalysis.flags ? curAnalysis.flags.length : 0,
+    date:      today(),
+    note:      note
+  };
+  state.queue.unshift(item);
+  refreshQBadge();
+  saveState();
+  toast('Disposition submitted');
+  setTimeout(function(){ goTo('queue', document.getElementById('nb-queue')); }, 700);
+}
+
+function addToQueue() {
+  var item = {
+    id:        'q' + Date.now(),
+    title:     curContent.substring(0, 50) + (curContent.length > 50 ? '…' : ''),
+    submitter: curMeta.submitter || 'Marketing',
+    type:      curMeta.type,
+    asset:     curMeta.asset,
+    status:    'pending',
+    score:     curAnalysis ? curAnalysis.score : 0,
+    flags:     curAnalysis && curAnalysis.flags ? curAnalysis.flags.length : 0,
+    date:      today()
+  };
+  state.queue.unshift(item);
+  refreshQBadge();
+  saveState();
+  toast('Added to queue');
+  setTimeout(function(){ goTo('queue', document.getElementById('nb-queue')); }, 600);
+}
+
+// ── Queue ──────────────────────────────────────────────────────
+function renderQueue() {
+  var pending = state.queue.filter(function(q){ return q.status === 'pending'; }).length;
+  document.getElementById('q-meta').textContent = pending + ' pending review';
+  refreshQBadge();
+  if (!state.queue.length) {
+    document.getElementById('q-list').innerHTML = '<div class="empty">No submissions yet.</div>';
+    return;
+  }
+  document.getElementById('q-list').innerHTML = state.queue.map(function(q) {
+    var bc = q.status === 'pending' ? 'q-pend' : q.status === 'pass' ? 'q-pass' : q.status === 'cond' ? 'q-cond' : 'q-fail';
+    var bl = q.status === 'pending' ? 'Pending' : q.status === 'pass' ? 'Pass' : q.status === 'cond' ? 'Conditional' : 'Fail';
+    return '<div class="q-item">'
+      + '<span class="q-badge ' + bc + '">' + bl + '</span>'
+      + '<div class="q-info"><div class="q-title">' + esc(q.title) + '</div>'
+      + '<div class="q-meta">' + esc(q.submitter) + ' &middot; ' + esc(q.type) + ' &middot; ' + esc(q.date)
+      + (q.note ? ' &middot; ' + esc(q.note) : '') + '</div></div>'
+      + '<div class="q-flag" style="color:' + (q.flags > 0 ? '#854f0b' : '#3b6d11') + '">'
+      + q.flags + ' flag' + (q.flags !== 1 ? 's' : '') + ' &middot; ' + q.score + '/100</div></div>';
+  }).join('');
+}
+
+// ── Precedents ─────────────────────────────────────────────────
+function renderPrec() {
+  document.getElementById('p-total').textContent   = state.decisions;
+  document.getElementById('p-flagged').textContent = state.precedents.flagged.length;
+  document.getElementById('p-passed').textContent  = state.precedents.passed.length;
+
+  function renderList(arr, verdict) {
+    if (!arr.length) return '<div class="empty">None yet.</div>';
+    return arr.map(function(p) {
+      var sc = verdict === 'flagged' ? 'sev-H' : 'sev-L';
+      var sl = verdict === 'flagged' ? 'FLAGGED' : 'PASSED';
+      return '<div class="prec-card">'
+        + '<div class="prec-phrase">&ldquo;' + esc(p.phrase) + '&rdquo;</div>'
+        + '<div class="prec-row">'
+        + '<span class="sev ' + sc + '">' + sl + '</span>'
+        + '<span class="tag">' + esc(p.rule) + '</span>'
+        + '<span class="prec-cnt">' + p.count + '&times;</span>'
+        + '<span class="prec-rat">' + esc(p.rationale) + '</span>'
+        + '</div></div>';
+    }).join('');
+  }
+  document.getElementById('list-flagged').innerHTML = renderList(state.precedents.flagged, 'flagged');
+  document.getElementById('list-passed').innerHTML  = renderList(state.precedents.passed,  'passed');
+}
+
+function resetPrec() {
+  if (!confirm('Reset precedent library to defaults?')) return;
+  var d = defaultState();
+  state.precedents = d.precedents;
+  state.decisions  = d.decisions;
+  refreshLearn();
+  saveState();
+  renderPrec();
+  toast('Precedent library reset');
+}
+
+function exportData() {
+  var blob = new Blob([JSON.stringify({precedents:state.precedents,queue:state.queue,decisions:state.decisions,exported:new Date().toISOString()},null,2)], {type:'application/json'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'compliance-' + new Date().toISOString().split('T')[0] + '.json';
+  a.click();
+}
+
+// ── Boot ───────────────────────────────────────────────────────
+refreshKeyStatus();
+refreshLearn();
+refreshQBadge();
+</script>
+</body>
+</html>
