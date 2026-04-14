@@ -1,0 +1,1847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compliance Marketing</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#111111;
+  --white:#ffffff;
+  --grey0:#f4f4f4;
+  --grey1:#e8e8e8;
+  --grey2:#cccccc;
+  --grey3:#999999;
+  --grey4:#555555;
+  --red:#E22B2B;
+  --red-light:#fdf0f0;
+  --red-dark:#a32020;
+  --font:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --r6:6px;--r10:10px;--r14:14px;
+}
+body{font-family:var(--font);font-size:14px;color:var(--black);background:var(--grey0);min-height:100vh}
+.hidden{display:none!important}
+
+/* ── Top bar ── */
+.topbar{background:var(--black);height:54px;display:flex;align-items:center;padding:0 28px;gap:0;position:sticky;top:0;z-index:100}
+
+/* ── Logo V11 ── */
+.logo{display:flex;align-items:center;gap:0;text-decoration:none;flex-shrink:0}
+.logo-mark{display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid rgba(255,255,255,0.15);border-radius:var(--r6)}
+.logo-m{font-size:17px;font-weight:700;color:var(--red);letter-spacing:-.01em}
+.logo-arrow{display:flex;align-items:center;padding:0 4px}
+.logo-arrow svg{width:18px;height:12px}
+.logo-c{font-size:17px;font-weight:700;color:var(--white);letter-spacing:-.01em}
+.logo-labels{display:flex;flex-direction:column;margin-left:10px;padding-left:10px;border-left:1px solid rgba(255,255,255,0.15)}
+.logo-label-m{font-size:10px;color:var(--red);letter-spacing:.04em;line-height:1.3}
+.logo-label-c{font-size:10px;color:rgba(255,255,255,0.6);letter-spacing:.04em;line-height:1.3}
+
+/* ── Top nav tabs ── */
+.topnav{display:flex;align-items:center;gap:2px;margin-left:32px;flex:1}
+.tnav{background:none;border:none;font-family:var(--font);font-size:13px;color:rgba(255,255,255,0.5);padding:8px 14px;border-radius:var(--r6);cursor:pointer;display:flex;align-items:center;gap:7px;white-space:nowrap;transition:color .15s,background .15s}
+.tnav:hover{color:rgba(255,255,255,0.85);background:rgba(255,255,255,0.06)}
+.tnav.on{color:var(--white);background:rgba(255,255,255,0.1);font-weight:500}
+.tnav-badge{font-size:10px;font-weight:600;padding:1px 6px;border-radius:20px;background:var(--red);color:var(--white);line-height:1.4}
+.tnav-badge.grey{background:rgba(255,255,255,0.2);color:var(--white)}
+
+/* ── Learn meter (topbar right) ── */
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.learn-pill{font-size:11px;color:rgba(255,255,255,0.4);display:flex;align-items:center;gap:6px}
+.learn-track{width:56px;height:3px;background:rgba(255,255,255,0.15);border-radius:2px}
+.learn-fill{height:100%;border-radius:2px;background:var(--red);transition:width .4s}
+
+/* ── Permissions banner ── */
+.perm-banner{background:#fffbf0;border-bottom:1px solid #f0d080;padding:9px 28px;display:flex;align-items:center;gap:10px;font-size:12px;color:#7a5c00}
+.perm-icon{font-size:14px;flex-shrink:0}
+
+/* ── Page layout ── */
+.page{max-width:900px;margin:0 auto;padding:24px 24px}
+
+
+/* ── Split pane analysis ── */
+.analysis-split{display:grid;grid-template-columns:1fr 340px;gap:0;min-height:500px;border:1px solid var(--grey1);border-radius:var(--r10);overflow:hidden;background:var(--white)}
+.analysis-doc{display:flex;flex-direction:column;border-right:1px solid var(--grey1)}
+.analysis-doc-head{padding:12px 16px;border-bottom:1px solid var(--grey1);display:flex;align-items:center;gap:10px;background:var(--grey0);flex-shrink:0}
+.analysis-doc-title{font-size:12px;font-weight:600;color:var(--grey4);flex:1}
+.doc-textarea{flex:1;width:100%;border:none;outline:none;padding:20px;font-family:Georgia,serif;font-size:14px;line-height:1.85;color:var(--black);background:var(--white);resize:none;min-height:400px}
+.doc-textarea::placeholder{color:var(--grey2);font-family:var(--font);font-size:13px}
+.analysis-flags{display:flex;flex-direction:column;overflow:hidden}
+.analysis-flags-head{padding:12px 16px;border-bottom:1px solid var(--grey1);background:var(--grey0);flex-shrink:0}
+.analysis-flags-title{font-size:12px;font-weight:600;color:var(--grey4)}
+.flags-scroll{flex:1;overflow-y:auto}
+.flag2{border-bottom:1px solid var(--grey1);padding:12px 14px;transition:background .15s}
+.flag2:last-child{border-bottom:none}
+.flag2.state-fixed{background:#f0faf3;border-left:3px solid #5a9e3a}
+.flag2.state-acknowledged{background:#f9f9f9;border-left:3px solid var(--grey2);opacity:.8}
+.flag2-head{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px}
+.flag2-phrase{font-size:12px;font-weight:500;color:var(--black);line-height:1.4;flex:1}
+.flag2-rule{font-size:10px;color:var(--grey3);margin-bottom:6px}
+.flag2-suggestion{font-size:11px;color:var(--grey4);background:var(--grey0);border-radius:var(--r6);padding:8px 10px;line-height:1.5;border-left:2px solid var(--grey2)}
+.flag2-suggestion strong{display:block;font-size:9px;font-weight:700;color:var(--grey3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
+.flag2-edit-area{width:100%;font-family:var(--font);font-size:12px;border:1px solid var(--grey2);border-radius:var(--r6);padding:7px 9px;outline:none;resize:vertical;line-height:1.5;margin-top:6px;min-height:60px}
+.flag2-edit-area:focus{border-color:var(--black)}
+.flag2-actions{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap}
+.faction{font-size:11px;font-family:var(--font);padding:5px 10px;border-radius:var(--r6);border:1px solid var(--grey2);background:var(--white);color:var(--black);cursor:pointer;transition:background .12s,border-color .12s}
+.faction:hover{background:var(--grey0)}
+.faction.primary{background:var(--black);color:var(--white);border-color:var(--black)}
+.faction.primary:hover{background:#333}
+.faction.green{background:#5a9e3a;color:var(--white);border-color:#5a9e3a}
+.faction.green:hover{background:#4a8a2e}
+.flag2-status{font-size:11px;font-weight:600;margin-top:6px;display:flex;align-items:center;gap:5px}
+.analysis-footer{display:flex;align-items:center;gap:12px;padding:14px 16px;border-top:1px solid var(--grey1);background:var(--grey0);margin-top:16px;border-radius:0 0 var(--r10) var(--r10)}
+
+/* ── Panel ── */
+.panel{background:var(--white);border:1px solid var(--grey1);border-radius:var(--r14);overflow:hidden;margin-bottom:16px}
+.panel-head{padding:16px 20px;border-bottom:1px solid var(--grey1);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.panel-title{font-size:14px;font-weight:600;flex:1;color:var(--black)}
+.panel-body{padding:20px}
+
+/* ── Buttons ── */
+.btn{padding:8px 16px;border-radius:var(--r6);border:1px solid var(--grey2);background:var(--white);color:var(--black);font-size:12px;font-family:var(--font);cursor:pointer;transition:background .12s}
+.btn:hover{background:var(--grey0)}
+.btn.primary{background:var(--black);color:var(--white);border-color:var(--black)}
+.btn.primary:hover{background:#333}
+.btn.red{background:var(--red);color:var(--white);border-color:var(--red)}
+.btn.red:hover{background:var(--red-dark)}
+.btn.sm{padding:5px 10px;font-size:11px}
+
+/* ── Input tabs ── */
+.itabs{display:flex;gap:2px;background:var(--grey1);padding:3px;border-radius:var(--r6);width:fit-content}
+.itab{padding:5px 14px;border-radius:5px;font-size:12px;font-family:var(--font);color:var(--grey4);background:none;border:none;cursor:pointer}
+.itab.on{background:var(--white);color:var(--black);font-weight:500}
+
+/* ── Form ── */
+.field{margin-bottom:14px}
+.fl{font-size:11px;font-weight:600;color:var(--grey4);margin-bottom:5px;letter-spacing:.02em}
+textarea,input[type=text],select{width:100%;font-family:var(--font);font-size:13px;color:var(--black);background:var(--white);border:1px solid var(--grey2);border-radius:var(--r6);padding:8px 11px;outline:none;transition:border-color .12s}
+textarea{resize:vertical;line-height:1.6}
+textarea:focus,input[type=text]:focus,select:focus{border-color:var(--black)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+.err-msg{font-size:12px;color:var(--red-dark);background:var(--red-light);padding:8px 11px;border-radius:var(--r6);margin-top:8px}
+
+/* ── PDF upload ── */
+.pdf-drop{border:1.5px dashed var(--grey2);border-radius:var(--r6);padding:28px 20px;text-align:center;cursor:pointer;transition:background .15s}
+.pdf-drop:hover{background:var(--grey0)}
+.pdf-status{margin-top:10px;padding:10px 13px;background:var(--grey0);border-radius:var(--r6);border:1px solid var(--grey1);font-size:12px;display:flex;align-items:center;gap:10px}
+
+/* ── Score banner ── */
+.score-banner{display:flex;align-items:center;gap:14px;padding:14px;background:var(--grey0);border-radius:var(--r10);border:1px solid var(--grey1);margin-bottom:14px}
+.score-info{flex:1}
+.score-title{font-size:13px;font-weight:600;margin-bottom:3px}
+.score-sub{font-size:12px;color:var(--grey4);line-height:1.5}
+.fw-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.fw-tag{font-size:10px;padding:2px 7px;border-radius:20px;background:var(--white);border:1px solid var(--grey1);color:var(--grey4)}
+
+/* ── Flags ── */
+.sec-title{font-size:10px;font-weight:600;color:var(--grey3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+.flag{border:1px solid var(--grey1);border-radius:var(--r6);margin-bottom:8px;overflow:hidden}
+.flag-hd{padding:10px 13px;display:flex;align-items:flex-start;gap:9px;cursor:pointer;transition:background .12s}
+.flag-hd:hover{background:var(--grey0)}
+.sev{font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;flex-shrink:0;margin-top:1px}
+.sev-H{background:#fdf0f0;color:var(--red-dark)}
+.sev-M{background:#fdf6e8;color:#7a4f00}
+.sev-L{background:#f0f7e8;color:#3a6010}
+.flag-phrase{font-size:13px;font-weight:500;flex:1;line-height:1.4}
+.flag-rule{font-size:11px;color:var(--grey4);margin-top:2px}
+.flag-chev{font-size:11px;color:var(--grey3);flex-shrink:0;transition:transform .15s}
+.flag-bd{display:none;padding:12px 13px;border-top:1px solid var(--grey1);background:var(--grey0)}
+.flag-bd.open{display:block}
+.fix-label{font-size:10px;font-weight:600;color:var(--grey3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:5px}
+.fix-edit{width:100%;font-family:var(--font);font-size:12px;color:var(--black);background:var(--white);border:1px solid var(--grey2);border-radius:var(--r6);padding:9px 11px;resize:vertical;line-height:1.6;margin-bottom:10px;outline:none}
+.fix-edit:focus{border-color:var(--black)}
+.action-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.action-lbl{font-size:11px;color:var(--grey4)}
+.vbtn{padding:5px 11px;border-radius:var(--r6);border:1px solid var(--grey2);font-size:11px;font-family:var(--font);background:var(--white);color:var(--black);cursor:pointer;transition:background .12s}
+.vbtn:hover{background:var(--grey0)}
+.vbtn.flagged{background:#fdf0f0;border-color:#f0b0b0;color:var(--red-dark);font-weight:500}
+.vbtn.passed{background:#f0f7e8;border-color:#b0cc90;color:#3a6010;font-weight:500}
+.vbtn.applied{background:#f0f7e8;border-color:#b0cc90;color:#3a6010;font-weight:500}
+
+/* ── Precedent matches ── */
+.prec-matches{margin-bottom:14px;padding:11px 13px;background:var(--grey0);border-radius:var(--r6);border:1px solid var(--grey1)}
+.prec-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.prec-chip{font-size:11px;padding:2px 8px;border-radius:20px;background:var(--white);border:1px solid var(--grey2);color:var(--grey4)}
+
+/* ── Disposition bar ── */
+.disp-bar{display:flex;gap:8px;align-items:center;padding-top:14px;border-top:1px solid var(--grey1);margin-top:14px;flex-wrap:wrap}
+.disp-lbl{font-size:13px;font-weight:500;white-space:nowrap}
+.dbtn{padding:5px 12px;border-radius:var(--r6);border:1px solid var(--grey2);font-size:12px;font-family:var(--font);background:var(--white);color:var(--black);cursor:pointer;transition:all .12s}
+.dbtn:hover{background:var(--grey0)}
+.dbtn.active-revision{background:#fdf0f0;border-color:#f0b0b0;color:var(--red-dark);font-weight:600;box-shadow:0 0 0 2px var(--red)}
+.dbtn.active-approved{background:#f0f7e8;border-color:#b0cc90;color:#3a6010;font-weight:600;box-shadow:0 0 0 2px #5a9e3a}
+
+/* ── Rewrite panel ── */
+.rewrite-panel{margin-top:16px;border:1px solid var(--grey1);border-radius:var(--r10);overflow:hidden}
+.rewrite-panel-head{padding:11px 14px;background:var(--grey0);border-bottom:1px solid var(--grey1);display:flex;align-items:center;gap:10px}
+.rewrite-panel-title{font-size:12px;font-weight:600;flex:1}
+.rewrite-applied-badge{font-size:11px;color:#3a6010;background:#f0f7e8;padding:2px 8px;border-radius:20px}
+.export-bar{display:flex;gap:8px;padding:10px 14px;border-top:1px solid var(--grey1);background:var(--grey0);flex-wrap:wrap;align-items:center}
+.export-label{font-size:11px;color:var(--grey4);margin-right:2px}
+
+/* ── Queue ── */
+.queue-tabs{display:flex;gap:0;border-bottom:1px solid var(--grey1)}
+.qtab{padding:12px 20px;font-size:13px;font-family:var(--font);color:var(--grey4);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;display:flex;align-items:center;gap:7px;transition:color .12s;margin-bottom:-1px}
+.qtab:hover{color:var(--black)}
+.qtab.on{color:var(--black);font-weight:600;border-bottom-color:var(--black)}
+.qtab.on.red-tab{border-bottom-color:var(--red);color:var(--red)}
+.qbadge{font-size:10px;font-weight:600;padding:1px 6px;border-radius:20px;line-height:1.4}
+.qb-red{background:var(--red);color:var(--white)}
+.qb-grey{background:var(--grey2);color:var(--grey4)}
+.qb-green{background:#5a9e3a;color:var(--white)}
+.queue-body{padding:0}
+
+/* ── Queue items ── */
+.q-item{display:flex;align-items:flex-start;gap:12px;padding:14px 20px;border-bottom:1px solid var(--grey1);cursor:pointer;transition:background .12s}
+.q-item:last-child{border-bottom:none}
+.q-item:hover{background:var(--grey0)}
+.q-status{flex-shrink:0;margin-top:2px}
+.q-status-dot{width:8px;height:8px;border-radius:50%}
+.dot-red{background:var(--red)}
+.dot-grey{background:var(--grey3)}
+.dot-green{background:#5a9e3a)}
+.q-info{flex:1;min-width:0}
+.q-title{font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:3px}
+.q-meta{font-size:11px;color:var(--grey4)}
+.q-tags{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap}
+.qtag{font-size:10px;padding:2px 7px;border-radius:20px;border:1px solid var(--grey2);color:var(--grey4);background:var(--white)}
+.qtag.resub{background:#fff8e8;border-color:#f0d080;color:#7a5000}
+.qtag.action-mkt{background:#fdf0f0;border-color:#f0b0b0;color:var(--red-dark)}
+.qtag.action-comp{background:#f0f0ff;border-color:#c0c0f0;color:#3a3a9a}
+.qtag.approved{background:#f0f7e8;border-color:#b0cc90;color:#3a6010}
+.q-score{font-size:11px;color:var(--grey4);white-space:nowrap;text-align:right}
+.empty{text-align:center;padding:40px;color:var(--grey3);font-size:13px}
+
+/* ── Precedent cards ── */
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.metric{background:var(--grey0);border-radius:var(--r6);padding:14px;border:1px solid var(--grey1)}
+.metric-val{font-size:22px;font-weight:700;color:var(--black)}
+.metric-lbl{font-size:11px;color:var(--grey4);margin-top:3px}
+.prec-card{border:1px solid var(--grey1);border-radius:var(--r6);padding:11px 13px;margin-bottom:8px}
+.prec-phrase{font-size:13px;font-style:italic;color:var(--grey4);margin-bottom:7px}
+.prec-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tag{font-size:10px;padding:2px 7px;border-radius:20px;background:var(--grey0);border:1px solid var(--grey1);color:var(--grey4)}
+.prec-rat{font-size:11px;color:var(--grey4);margin-left:auto}
+
+/* ── Help ── */
+.help-tabs{display:flex;gap:2px;background:var(--grey1);padding:3px;border-radius:var(--r6);width:fit-content}
+.htab{padding:5px 14px;border-radius:5px;font-size:12px;font-family:var(--font);color:var(--grey4);background:none;border:none;cursor:pointer}
+.htab.on{background:var(--white);color:var(--black);font-weight:500}
+.help-callout{background:var(--grey0);border-left:3px solid var(--grey2);padding:11px 13px;border-radius:0 var(--r6) var(--r6) 0;margin-top:16px}
+.help-callout.warn{border-left-color:var(--red);background:var(--red-light)}
+.steps{display:flex;flex-direction:column;gap:13px}
+.step{display:flex;gap:12px;align-items:flex-start}
+.step-n{width:22px;height:22px;border-radius:50%;background:var(--black);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;margin-top:1px;color:var(--white)}
+.step-title{font-size:13px;font-weight:500;margin-bottom:3px}
+.step-desc{font-size:12px;color:var(--grey4);line-height:1.6}
+.rule-block{border:1px solid var(--grey1);border-radius:var(--r10);margin-bottom:12px;overflow:hidden}
+.rule-block-hd{padding:12px 15px;background:var(--grey0);border-bottom:1px solid var(--grey1)}
+.rule-block-title{font-size:13px;font-weight:600;margin-bottom:2px}
+.rule-block-sub{font-size:11px;color:var(--grey4)}
+.rule-block-body{padding:13px 15px;display:flex;flex-direction:column;gap:12px}
+.sub-rule{display:flex;gap:10px;align-items:flex-start}
+.sub-cite{font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;background:var(--grey0);border:1px solid var(--grey1);color:var(--grey4);white-space:nowrap;flex-shrink:0;margin-top:1px;font-family:monospace}
+.sub-title{font-size:12px;font-weight:500;margin-bottom:2px}
+.sub-desc{font-size:12px;color:var(--grey4);line-height:1.6}
+.rule-items{display:flex;flex-direction:column;gap:9px;margin-bottom:14px}
+.rule-item{display:flex;gap:10px;align-items:flex-start;padding:11px;border:1px solid var(--grey1);border-radius:var(--r6)}
+.rule-item-title{font-size:12px;font-weight:500;margin-bottom:2px}
+.rule-item-desc{font-size:12px;color:var(--grey4);line-height:1.6}
+
+/* ── Preview overlay ── */
+.preview-overlay{position:fixed;top:0;right:0;bottom:0;width:520px;max-width:100vw;background:var(--white);border-left:1px solid var(--grey1);z-index:200;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .25s ease}
+.preview-overlay.open{transform:translateX(0)}
+.preview-header{padding:16px 20px;border-bottom:1px solid var(--grey1);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.preview-title{font-size:14px;font-weight:600;flex:1}
+.preview-body{flex:1;overflow-y:auto;padding:24px 24px}
+.preview-para{font-size:13px;line-height:1.8;margin-bottom:14px;color:var(--black)}
+.preview-revised{background:#e8f5e0;border-radius:3px;padding:1px 3px;color:#2a5a10;position:relative;display:inline}
+.preview-revised-tag{display:inline-block;font-size:9px;font-weight:600;background:#5a9e3a;color:var(--white);padding:1px 5px;border-radius:20px;margin-left:4px;vertical-align:middle;letter-spacing:.03em;position:relative;top:-1px}
+.preview-legend{display:flex;align-items:center;gap:8px;padding:12px 24px;border-top:1px solid var(--grey1);font-size:11px;color:var(--grey4);flex-shrink:0;background:var(--grey0)}
+.preview-legend-dot{width:14px;height:10px;background:#e8f5e0;border-radius:2px;border:1px solid #b0dd90;flex-shrink:0}
+.preview-dim{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.25);z-index:199;display:none}
+.preview-dim.open{display:block}
+
+.loading{display:flex;align-items:center;gap:10px;padding:24px;color:var(--grey4);font-size:13px}
+.spin{width:15px;height:15px;border:2px solid var(--grey1);border-top-color:var(--grey3);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:22px;right:22px;background:var(--black);color:var(--white);padding:9px 15px;border-radius:var(--r6);font-size:13px;z-index:999;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<!-- Top bar -->
+<header class="topbar">
+  <div class="logo">
+    <div class="logo-mark">
+      <span class="logo-m">M</span>
+      <span class="logo-arrow">
+        <svg viewBox="0 0 18 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="0" y1="6" x2="13" y2="6" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M10 2L15 6L10 10" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+      </span>
+      <span class="logo-c">C</span>
+    </div>
+    <div class="logo-labels">
+      <span class="logo-label-m">Marketing</span>
+      <span class="logo-label-c">Compliance</span>
+    </div>
+  </div>
+
+  <nav class="topnav">
+    <button class="tnav on" id="tnav-submit" onclick="goTo('submit',this)">New Submission</button>
+    <button class="tnav" id="tnav-queue" onclick="goTo('queue',this)">
+      Review Queue
+      <span class="tnav-badge hidden" id="badge-queue">0</span>
+    </button>
+    <button class="tnav" id="tnav-prec" onclick="goTo('prec',this)">Precedents</button>
+    <button class="tnav" id="tnav-help" onclick="goTo('help',this)">Help &amp; Rules</button>
+    <button class="tnav" id="tnav-settings" onclick="goTo('settings',this)">Settings</button>
+  </nav>
+
+  <div class="topbar-right">
+    <div class="learn-pill">
+      <div class="learn-track"><div class="learn-fill" id="learn-bar" style="width:65%"></div></div>
+      <span id="learn-conf">65%</span>
+    </div>
+  </div>
+</header>
+
+<!-- Permissions reminder banner -->
+<div class="perm-banner">
+  <span class="perm-icon">&#9888;</span>
+  <span><strong>Permissions reminder:</strong> Role-based access is not yet configured. Only Compliance should be able to move items to Approved. Separate Marketing and Compliance permissions will need to be set up before production use.</span>
+</div>
+
+<div class="page">
+
+  <!-- NEW SUBMISSION -->
+  <div id="v-submit" class="panel">
+    <div class="panel-head">
+      <div class="panel-title">New submission</div>
+      <div class="itabs">
+        <button class="itab on" id="itab-text" onclick="setMode('text',this)">Paste text</button>
+        <button class="itab" id="itab-url" onclick="setMode('url',this)">URL</button>
+        <button class="itab" id="itab-pdf" onclick="setMode('pdf',this)">File</button>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="field">
+        <div class="fl">Content to review</div>
+        <div id="wrap-text"><textarea id="txt-input" rows="9" placeholder="Paste marketing copy, email, social post, script, or web content here…"></textarea></div>
+        <div id="wrap-url" class="hidden"><input type="text" id="url-input" placeholder="https://…"><div style="font-size:11px;color:var(--grey3);margin-top:6px">Paste page text above as well for best results.</div></div>
+        <div id="wrap-pdf" class="hidden">
+          <div id="pdf-drop" class="pdf-drop" onclick="document.getElementById('pdf-file').click()" ondragover="event.preventDefault();this.style.background='var(--grey1)'" ondragleave="this.style.background=''" ondrop="handlePdfDrop(event)">
+            <div style="font-size:13px;font-weight:500;margin-bottom:4px">Drop file here or click to browse</div>
+            <div style="font-size:12px;color:var(--grey3)">PDF, Word (.doc/.docx), or image (PNG, JPG, GIF, WebP) · Max 32 MB</div>
+          </div>
+          <input type="file" id="pdf-file" accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/png,image/jpeg,image/gif,image/webp" style="display:none" onchange="handlePdfFile(this.files[0])">
+          <div id="pdf-status" class="pdf-status hidden">
+            <span id="pdf-name" style="flex:1;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
+            <span id="pdf-size" style="color:var(--grey4);flex-shrink:0"></span>
+            <button onclick="clearPdf()" style="background:none;border:none;cursor:pointer;color:var(--grey3);font-size:18px;line-height:1;padding:0 2px">&times;</button>
+          </div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <div class="fl">Asset class</div>
+          <select id="sel-asset">
+            <option value="securities">Securities (equities / ETFs)</option>
+            <option value="options">Options</option>
+            <option value="futures">Futures / commodities</option>
+            <option value="crypto">Crypto</option>
+            <option value="all" selected>All / multi-asset</option>
+          </select>
+        </div>
+        <div class="field">
+          <div class="fl">Communication type</div>
+          <select id="sel-type">
+            <option value="retail-web">Retail — website / educational</option>
+            <option value="retail-email">Retail — email</option>
+            <option value="retail-social">Retail — social / ad</option>
+            <option value="institutional">Institutional</option>
+            <option value="retail-video">Retail — video script</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <div class="fl">Target audience</div>
+          <select id="sel-aud">
+            <option value="general">General public</option>
+            <option value="active">Active / experienced traders</option>
+            <option value="accredited">Accredited investors</option>
+          </select>
+        </div>
+        <div class="field">
+          <div class="fl">Submitted by</div>
+          <input type="text" id="txt-submitter" placeholder="Name or team">
+        </div>
+      </div>
+      <button class="btn primary" style="width:100%" onclick="runAnalysis()">Analyze for compliance &#8594;</button>
+      <div id="submit-err" class="err-msg hidden"></div>
+    </div>
+  </div>
+
+  <!-- ANALYSIS — Marketing workspace -->
+  <div id="v-analysis" class="panel hidden">
+    <div class="panel-head">
+      <button class="btn sm" onclick="goTo('submit',document.getElementById('tnav-submit'))">&#8592; Back</button>
+      <div class="panel-title" id="analysis-title">Analysis</div>
+    </div>
+    <div class="panel-body">
+      <div id="loading-wrap" class="loading"><div class="spin"></div>Analyzing against FINRA 2210, NFA 2-29, and firm precedents…</div>
+      <div id="analysis-wrap" class="hidden">
+        <!-- Score bar -->
+        <div class="score-banner" style="margin-bottom:14px">
+          <svg width="54" height="54" viewBox="0 0 54 54" style="flex-shrink:0">
+            <circle cx="27" cy="27" r="22" fill="none" stroke="var(--grey1)" stroke-width="4"/>
+            <circle id="arc" cx="27" cy="27" r="22" fill="none" stroke="#5a9e3a" stroke-width="4" stroke-linecap="round" stroke-dasharray="0 138.2" transform="rotate(-90 27 27)" style="transition:stroke-dasharray .6s,stroke .4s"/>
+            <text id="arc-num" x="27" y="32" text-anchor="middle" font-size="13" font-weight="600" fill="var(--black)">—</text>
+          </svg>
+          <div class="score-info">
+            <div class="score-title" id="score-title">Analyzing…</div>
+            <div class="score-sub" id="score-sub"></div>
+            <div class="fw-tags" id="fw-tags"></div>
+          </div>
+        </div>
+        <!-- Split pane: document left, flags right -->
+        <div class="analysis-split">
+          <!-- Left: working document -->
+          <div class="analysis-doc">
+            <div class="analysis-doc-head">
+              <div class="analysis-doc-title">Working document</div>
+              <span id="doc-edit-hint" style="font-size:11px;color:var(--grey3)">Edit directly — changes tracked on send</span>
+            </div>
+            <textarea id="rewrite-text" class="doc-textarea" spellcheck="true"
+              placeholder="Article text will appear here. Edit directly — your changes will be highlighted for compliance."></textarea>
+          </div>
+          <!-- Right: flags panel -->
+          <div class="analysis-flags">
+            <div class="analysis-flags-head">
+              <div class="analysis-flags-title">Compliance flags <span id="flag-count-badge" style="font-size:10px;font-weight:600;background:var(--red);color:#fff;padding:1px 7px;border-radius:20px;margin-left:6px"></span></div>
+            </div>
+            <div class="flags-scroll" id="flags-wrap"></div>
+          </div>
+        </div>
+        <!-- Footer -->
+        <div class="analysis-footer">
+          <button class="btn sm" onclick="openPreviewFromAnalysis()">&#128065; Preview</button>
+          <button class="btn sm" onclick="exportDocx()">&#8595; Word</button>
+          <button class="btn sm" onclick="exportPdf()">&#8595; PDF</button>
+          <div style="flex:1;font-size:12px;color:var(--grey4);text-align:center" id="doc-status">Edit the document, then send to Compliance.</div>
+          <button class="btn primary" onclick="sendToRevQueue()">Send to Compliance Review &#8594;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REVISION WORKSPACE — Marketing fixes compliance notes -->
+  <div id="v-revision" class="panel hidden">
+    <div class="panel-head">
+      <button class="btn sm" onclick="goTo('queue',document.getElementById('tnav-queue'))">&#8592; Back to queue</button>
+      <div class="panel-title" id="revision-title">Revision workspace</div>
+    </div>
+    <div class="panel-body">
+      <!-- Compliance notes banner -->
+      <div id="revision-notes-banner" style="padding:14px 16px;background:#fdf0f0;border:1px solid #f0b0b0;border-radius:var(--r10);margin-bottom:16px">
+        <div style="font-size:11px;font-weight:600;color:var(--red-dark);letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px">Compliance revision notes</div>
+        <div id="revision-notes-text" style="font-size:13px;color:var(--black);line-height:1.6"></div>
+      </div>
+      <!-- Score banner -->
+      <div class="score-banner" id="revision-score-banner">
+        <svg width="54" height="54" viewBox="0 0 54 54" style="flex-shrink:0">
+          <circle cx="27" cy="27" r="22" fill="none" stroke="var(--grey1)" stroke-width="4"/>
+          <circle id="rev-arc" cx="27" cy="27" r="22" fill="none" stroke="#5a9e3a" stroke-width="4" stroke-linecap="round" stroke-dasharray="0 138.2" transform="rotate(-90 27 27)" style="transition:stroke-dasharray .6s,stroke .4s"/>
+          <text id="rev-arc-num" x="27" y="32" text-anchor="middle" font-size="13" font-weight="600" fill="var(--black)">—</text>
+        </svg>
+        <div class="score-info">
+          <div class="score-title" id="rev-score-title"></div>
+          <div class="score-sub" id="rev-score-sub"></div>
+          <div class="fw-tags" id="rev-fw-tags"></div>
+        </div>
+      </div>
+      <!-- Original flags -->
+      <div class="sec-title">Flagged items from original review</div>
+      <div id="rev-flags-wrap"></div>
+      <!-- Revised article panel -->
+      <div class="rewrite-panel" style="margin-top:16px">
+        <div class="rewrite-panel-head">
+          <div class="rewrite-panel-title">Revised article</div>
+          <span id="rev-rewrite-count" style="font-size:11px;color:var(--grey4)"></span>
+          <span id="rev-rewrite-badge" class="rewrite-applied-badge hidden">Rewrites applied</span>
+        </div>
+        <div style="padding:14px">
+          <textarea id="rev-rewrite-text" rows="10" spellcheck="true" placeholder="Edit your article here — apply rewrites above or edit directly."></textarea>
+        </div>
+        <div class="export-bar">
+          <span class="export-label">Article:</span>
+          <button class="btn sm primary" onclick="openPreviewFromRevision()">&#128065; Preview</button>
+          <button class="btn sm" onclick="resetRevisionRewrites()">Reset</button>
+        </div>
+      </div>
+      <!-- Resubmit bar -->
+      <div style="display:flex;align-items:center;gap:12px;padding-top:16px;border-top:1px solid var(--grey1);margin-top:16px">
+        <div style="flex:1;font-size:12px;color:var(--grey4)">Address the compliance notes above, then resubmit. Compliance will see your changes highlighted.</div>
+        <button class="btn primary" onclick="resubmitToCompliance()">Resubmit to Compliance &#8594;</button>
+      </div>
+    </div>
+  </div>
+  <div id="v-queue" class="panel hidden">
+    <div class="panel-head">
+      <div class="panel-title">Review Queue</div>
+    </div>
+    <div class="queue-tabs">
+      <button class="qtab on red-tab" id="qt-revision" onclick="switchQueue('revision',this)">
+        Revision Requested
+        <span class="qbadge qb-red" id="qb-revision">0</span>
+      </button>
+      <button class="qtab" id="qt-pending" onclick="switchQueue('pending',this)">
+        Pending Compliance Review
+        <span class="qbadge qb-grey" id="qb-pending">0</span>
+      </button>
+      <button class="qtab" id="qt-approved" onclick="switchQueue('approved',this)">
+        Approved
+        <span class="qbadge qb-green" id="qb-approved">0</span>
+      </button>
+    </div>
+    <div class="queue-body" id="queue-body"></div>
+  </div>
+
+  <!-- PRECEDENTS -->
+  <div id="v-prec" class="panel hidden">
+    <div class="panel-head"><div class="panel-title">Precedent library</div><div style="font-size:12px;color:var(--grey4)">Learned from compliance decisions</div></div>
+    <div class="panel-body">
+      <div class="metrics">
+        <div class="metric"><div class="metric-val" id="p-total">—</div><div class="metric-lbl">Total decisions</div></div>
+        <div class="metric"><div class="metric-val" id="p-flagged">—</div><div class="metric-lbl">Flagged patterns</div></div>
+        <div class="metric"><div class="metric-val" id="p-passed">—</div><div class="metric-lbl">Passed patterns</div></div>
+      </div>
+      <div class="sec-title">Flagged language</div>
+      <div id="list-flagged"></div>
+      <div class="sec-title" style="margin-top:16px">Passed language</div>
+      <div id="list-passed"></div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div id="v-settings" class="panel hidden">
+    <div class="panel-head"><div class="panel-title">Settings</div></div>
+    <div class="panel-body">
+      <div class="field">
+        <div class="fl">Reset precedent library</div>
+        <button class="btn" onclick="resetPrec()">Reset to defaults</button>
+        <div style="font-size:11px;color:var(--grey3);margin-top:6px">Clears all learned decisions and restores default examples.</div>
+      </div>
+      <div class="field" style="margin-top:8px">
+        <div class="fl">Export decisions</div>
+        <button class="btn" onclick="exportData()">Export JSON</button>
+        <div style="font-size:11px;color:var(--grey3);margin-top:6px">Downloads all precedents and queue history for audit records.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HELP -->
+  <div id="v-help" class="panel hidden">
+    <div class="panel-head">
+      <div class="panel-title">Help &amp; regulatory rules</div>
+      <div class="help-tabs">
+        <button class="htab on" id="ht-mkt" onclick="helpTab('mkt',this)">For marketing</button>
+        <button class="htab" id="ht-comp" onclick="helpTab('comp',this)">For compliance</button>
+        <button class="htab" id="ht-rules" onclick="helpTab('rules',this)">Rules reference</button>
+      </div>
+    </div>
+    <div class="panel-body">
+
+      <div id="h-mkt">
+        <p style="font-size:13px;color:var(--grey4);line-height:1.7;margin-bottom:16px">This tool pre-screens your marketing content against FINRA Rule 2210 and NFA Rule 2-29 before it reaches the compliance team. Submit content, review AI flags, and send to Pending Compliance Review. Compliance will review and either approve or send back with revision notes.</p>
+        <div class="sec-title">How to submit</div>
+        <div class="steps">
+          <div class="step"><div class="step-n">1</div><div><div class="step-title">Paste, upload, or enter a URL</div><div class="step-desc">Use the New Submission tab to paste copy, drop a PDF, or enter a page URL. Select the asset class, communication type, and audience.</div></div></div>
+          <div class="step"><div class="step-n">2</div><div><div class="step-title">Review AI analysis</div><div class="step-desc">The tool scores your content and flags issues with specific rule citations. Expand each flag to see a suggested rewrite. Apply rewrites directly in the revised article panel.</div></div></div>
+          <div class="step"><div class="step-n">3</div><div><div class="step-title">Send to Pending Compliance Review</div><div class="step-desc">Click Send to Pending Review. Compliance will pick it up from their queue and either approve it or send it back with revision notes.</div></div></div>
+          <div class="step"><div class="step-n">4</div><div><div class="step-title">Act on revision requests</div><div class="step-desc">If compliance sends it back, the item appears in Revision Requested with their notes. Make the changes and resubmit — it will return to Pending Compliance Review tagged as a Resubmission.</div></div></div>
+        </div>
+        <div class="help-callout warn" style="margin-top:16px">
+          <div style="font-size:12px;font-weight:600;margin-bottom:4px">Important</div>
+          <div style="font-size:12px;line-height:1.6;color:var(--red-dark)">A passing AI score is not final approval. All content requires a compliance disposition before publication. The AI pre-screen reduces review cycles but does not replace principal approval under FINRA and NFA rules.</div>
+        </div>
+      </div>
+
+      <div id="h-comp" class="hidden">
+        <p style="font-size:13px;color:var(--grey4);line-height:1.7;margin-bottom:16px">Marketing submits content to the Pending Compliance Review queue. Each submission includes an AI pre-screen with rule-mapped flags. Your job is to review, make per-flag decisions, and issue a disposition. Every decision trains the precedent library.</p>
+        <div class="sec-title">Review workflow</div>
+        <div class="steps">
+          <div class="step"><div class="step-n">1</div><div><div class="step-title">Pick up items from Pending Compliance Review</div><div class="step-desc">Items tagged "Resubmission" have been through a prior round — check compliance notes from the previous cycle. Items without a tag are first-time submissions.</div></div></div>
+          <div class="step"><div class="step-n">2</div><div><div class="step-title">Review AI flags and make per-flag decisions</div><div class="step-desc">Expand each flag and choose Keep flagged or Mark acceptable. Every decision updates the precedent library and calibrates future analyses.</div></div></div>
+          <div class="step"><div class="step-n">3</div><div><div class="step-title">Issue a disposition</div><div class="step-desc">Select Request revision (sends to Revision Requested with your notes) or Approve (moves to Approved). Only compliance can issue approvals.</div></div></div>
+        </div>
+        <div class="help-callout warn" style="margin-top:16px">
+          <div style="font-size:12px;font-weight:600;margin-bottom:4px">Recordkeeping</div>
+          <div style="font-size:12px;line-height:1.6;color:var(--red-dark)">Use Export JSON in Settings to archive decisions periodically. This supplements required records under FINRA Rule 4511 and NFA Rule 2-10. This tool does not replace your firm's existing principal approval recordkeeping system.</div>
+        </div>
+      </div>
+
+      <div id="h-rules" class="hidden">
+        <p style="font-size:13px;color:var(--grey4);line-height:1.7;margin-bottom:18px">The AI maps every flag to a specific rule citation from the frameworks below.</p>
+        <div class="rule-block">
+          <div class="rule-block-hd"><div class="rule-block-title">FINRA Rule 2210 — Communications with the public</div><div class="rule-block-sub">Securities, options, ETFs · Retail and institutional</div></div>
+          <div class="rule-block-body">
+            <div class="sub-rule"><span class="sub-cite">2210(d)(1)</span><div><div class="sub-title">General standards</div><div class="sub-desc">Content must be fair, balanced, and not contain false, exaggerated, unwarranted, promissory, or misleading statements. Flags superlatives, promissory language, and claims implying certainty about future performance.</div></div></div>
+            <div class="sub-rule"><span class="sub-cite">2210(d)(1)(B)</span><div><div class="sub-title">Risk disclosure prominence</div><div class="sub-desc">Potential rewards must give equal prominence to associated risks. Risk buried in footnotes alone does not satisfy this for retail communications.</div></div></div>
+            <div class="sub-rule"><span class="sub-cite">2210(d)(2)</span><div><div class="sub-title">Performance data</div><div class="sub-desc">Past performance must not imply future results. Required time periods apply. Flags any figure not accompanied by the standard disclaimer.</div></div></div>
+            <div class="sub-rule"><span class="sub-cite">2210(c)</span><div><div class="sub-title">Principal review</div><div class="sub-desc">Retail communications must be reviewed and approved by a registered principal. This tool's AI analysis supports but does not satisfy that requirement.</div></div></div>
+          </div>
+        </div>
+        <div class="rule-block">
+          <div class="rule-block-hd"><div class="rule-block-title">FINRA Rule 2220 — Options communications</div><div class="rule-block-sub">Options · Retail</div></div>
+          <div class="rule-block-body">
+            <div class="sub-rule"><span class="sub-cite">2220(b)</span><div><div class="sub-title">ODD delivery</div><div class="sub-desc">Retail options communications must reference and link to the Characteristics and Risks of Standardized Options.</div></div></div>
+            <div class="sub-rule"><span class="sub-cite">2220(c)</span><div><div class="sub-title">Suitability language</div><div class="sub-desc">Must state options are not suitable for all investors and may expose investors to potentially significant losses.</div></div></div>
+          </div>
+        </div>
+        <div class="rule-block">
+          <div class="rule-block-hd"><div class="rule-block-title">NFA Compliance Rule 2-29 — Communications with the public</div><div class="rule-block-sub">Futures, commodities, forex · Retail and institutional</div></div>
+          <div class="rule-block-body">
+            <div class="sub-rule"><span class="sub-cite">2-29(b)(1)</span><div><div class="sub-title">Hypothetical performance disclaimer</div><div class="sub-desc">Any hypothetical or simulated performance must include the NFA's mandated verbatim disclaimer.</div></div></div>
+            <div class="sub-rule"><span class="sub-cite">2-29(b)(2)</span><div><div class="sub-title">Risk disclosure prominence</div><div class="sub-desc">Risk disclosure must appear on the same page as promotional claims. Footer-only is insufficient.</div></div></div>
+            <div class="sub-rule"><span class="sub-cite">2-29(c)</span><div><div class="sub-title">Testimonials</div><div class="sub-desc">Must disclose whether the speaker is a customer and whether compensated.</div></div></div>
+          </div>
+        </div>
+        <div class="rule-block">
+          <div class="rule-block-hd"><div class="rule-block-title">Crypto</div><div class="rule-block-sub">Digital assets · Regulatory status: evolving</div></div>
+          <div class="rule-block-body">
+            <div class="sub-rule"><span class="sub-cite">FINRA 2210</span><div><div class="sub-title">If offered through a FINRA BD</div><div class="sub-desc">Treated as retail communications. FINRA Notice 22-08: must not overstate gains or understate risks including total loss.</div></div></div>
+            <div class="sub-rule"><span class="sub-cite">General</span><div><div class="sub-title">Total loss disclosure</div><div class="sub-desc">Must disclose the value of any cryptocurrency may go to zero, including stablecoins.</div></div></div>
+          </div>
+        </div>
+        <div class="help-callout" style="margin-top:4px">
+          <div style="font-size:12px;font-weight:600;margin-bottom:4px">Disclaimer</div>
+          <div style="font-size:12px;line-height:1.6;color:var(--grey4)">This tool assists compliance review and does not constitute legal advice. Rule interpretations based on FINRA and NFA guidance current as of early 2026. Always verify against the current rulebook and consult qualified legal counsel for material questions.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<div class="preview-dim" id="preview-dim" onclick="closePreview()"></div>
+<div id="preview-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:200;background:var(--white);flex-direction:column">
+  <!-- Header -->
+  <div style="height:52px;background:var(--black);display:flex;align-items:center;padding:0 16px;gap:8px;flex-shrink:0;min-width:0">
+    <button class="btn sm" onclick="closePreview()" style="background:var(--red);border-color:var(--red);color:var(--white);flex-shrink:0;font-weight:600">&#10005; Close</button>
+    <div style="font-size:13px;font-weight:600;color:var(--white);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0" id="preview-title">Document review</div>
+    <span style="font-size:11px;color:rgba(255,255,255,0.4);white-space:nowrap;flex-shrink:0" id="preview-status-bar"></span>
+    <button class="btn sm" onclick="exportDocxFromPreview()" style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.2);color:var(--white);flex-shrink:0">&#8595; Word</button>
+    <button class="btn sm" onclick="exportPdfFromPreview()" style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.2);color:var(--white);flex-shrink:0">&#8595; PDF</button>
+  </div>
+  <!-- Body: document + annotations side by side -->
+  <div style="flex:1;display:flex;overflow:hidden;min-height:0">
+    <!-- Left: document viewer -->
+    <div style="flex:1;overflow:auto;background:#525659;display:flex;flex-direction:column;min-width:0" id="preview-doc-pane"></div>
+    <!-- Right: annotations panel -->
+    <div style="width:320px;flex-shrink:0;border-left:2px solid var(--grey1);display:flex;flex-direction:column;background:var(--white);overflow:hidden">
+      <div style="padding:12px 16px;border-bottom:1px solid var(--grey1);font-size:11px;font-weight:600;color:var(--grey4);letter-spacing:.05em;text-transform:uppercase;flex-shrink:0">Review annotations</div>
+      <div style="flex:1;overflow-y:auto" id="preview-annotations"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var SK = 'cr_v4';
+var curAnalysis = null;
+var curContent  = '';
+var curMeta     = {};
+var curDisp     = null;
+var curIsFile        = false;
+var curExtractingPdf = false;
+var extractedPdfText = '';
+var pdfB64      = null;
+var pdfName     = '';
+var appliedRewrites = [];
+var curRewriteDiffs = [];
+var curQueueTab = 'revision';
+
+function defaultState() {
+  return {
+    queue: [],
+    precedents: {
+      flagged: [
+        {phrase:'highly effective',rule:'FINRA 2210(d)(1)',count:4,rationale:'Superlative implying unsubstantiated reliability'},
+        {phrase:'increased likelihood',rule:'FINRA 2210(d)(1)',count:3,rationale:'Predictive claim without statistical basis'},
+        {phrase:"opportunities others don't see",rule:'FINRA 2210(d)(1)',count:2,rationale:'Implies informational advantage'},
+        {phrase:'risk/reward ratios are higher',rule:'FINRA 2210(d)(1)',count:2,rationale:'Unsubstantiated comparative claim'}
+      ],
+      passed: [
+        {phrase:'trading involves risk of loss',rule:'General',count:8,rationale:'Standard risk disclosure language'},
+        {phrase:'not suitable for all investors',rule:'FINRA 2210',count:6,rationale:'Appropriate suitability caveat'},
+        {phrase:'pros and cons',rule:'FINRA 2210',count:4,rationale:'Balanced treatment'}
+      ]
+    },
+    decisions: 12
+  };
+}
+
+function loadState() {
+  try { var s = localStorage.getItem(SK); return s ? JSON.parse(s) : defaultState(); }
+  catch(e) { return defaultState(); }
+}
+function saveState() { try { localStorage.setItem(SK, JSON.stringify(state)); } catch(e) {} }
+
+var state = loadState();
+
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function today() { return new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 2400);
+}
+
+function goTo(v, btn) {
+  ['submit','analysis','queue','prec','settings','help','revision'].forEach(function(id){
+    document.getElementById('v-'+id).classList.add('hidden');
+  });
+  document.getElementById('v-'+v).classList.remove('hidden');
+  document.querySelectorAll('.tnav').forEach(function(b){ b.classList.remove('on'); });
+  if (btn) btn.classList.add('on');
+  if (v === 'queue')   renderQueue();
+  if (v === 'prec')    renderPrec();
+}
+
+function setMode(mode, btn) {
+  document.querySelectorAll('.itab').forEach(function(t){ t.classList.remove('on'); });
+  btn.classList.add('on');
+  document.getElementById('wrap-text').classList.toggle('hidden', mode !== 'text');
+  document.getElementById('wrap-url').classList.toggle('hidden', mode !== 'url');
+  document.getElementById('wrap-pdf').classList.toggle('hidden', mode !== 'pdf');
+}
+
+function helpTab(tab, btn) {
+  ['mkt','comp','rules'].forEach(function(t){
+    document.getElementById('h-'+t).classList.add('hidden');
+    document.getElementById('ht-'+t).classList.remove('on');
+  });
+  document.getElementById('h-'+tab).classList.remove('hidden');
+  btn.classList.add('on');
+}
+
+var fileMediaType = 'application/pdf';
+
+function handlePdfDrop(e) {
+  e.preventDefault();
+  document.getElementById('pdf-drop').style.background = '';
+  var file = e.dataTransfer.files[0];
+  if (file) handlePdfFile(file);
+}
+function handlePdfFile(file) {
+  if (!file) return;
+  var allowed = ['application/pdf','application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'image/png','image/jpeg','image/gif','image/webp'];
+  if (allowed.indexOf(file.type) === -1) {
+    toast('Unsupported file type — use PDF, Word, or image'); return;
+  }
+  if (file.size > 32*1024*1024) { toast('File too large — max 32 MB'); return; }
+  fileMediaType = file.type;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    pdfB64 = e.target.result.split(',')[1];
+    pdfName = file.name;
+    document.getElementById('pdf-name').textContent = file.name;
+    document.getElementById('pdf-size').textContent = (file.size/1024).toFixed(0)+' KB';
+    document.getElementById('pdf-status').classList.remove('hidden');
+    document.getElementById('pdf-drop').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+function clearPdf() {
+  pdfB64 = null; pdfName = ''; fileMediaType = 'application/pdf';
+  document.getElementById('pdf-file').value = '';
+  document.getElementById('pdf-status').classList.add('hidden');
+  document.getElementById('pdf-drop').style.display = '';
+}
+
+function refreshLearn() {
+  var conf = Math.min(95, 50 + Math.floor(state.decisions/2));
+  document.getElementById('learn-bar').style.width = conf+'%';
+  document.getElementById('learn-conf').textContent = conf+'%';
+}
+
+function refreshBadges() {
+  var pending  = state.queue.filter(function(q){ return q.status==='pending'; }).length;
+  var revision = state.queue.filter(function(q){ return q.status==='revision'; }).length;
+  var approved = state.queue.filter(function(q){ return q.status==='approved'; }).length;
+  var total = pending + revision;
+  var qb = document.getElementById('badge-queue');
+  if (total > 0) { qb.textContent = total; qb.classList.remove('hidden'); }
+  else { qb.classList.add('hidden'); }
+  document.getElementById('qb-pending').textContent  = pending;
+  document.getElementById('qb-revision').textContent = revision;
+  document.getElementById('qb-approved').textContent = approved;
+}
+
+function runAnalysis() {
+  var text  = document.getElementById('txt-input').value.trim();
+  var url   = document.getElementById('url-input').value.trim();
+  var errEl = document.getElementById('submit-err');
+  var isPdf = !document.getElementById('wrap-pdf').classList.contains('hidden');
+
+  if (isPdf && !pdfB64) { errEl.textContent='Please upload a file.'; errEl.classList.remove('hidden'); return; }
+  if (!isPdf && !text && !url) { errEl.textContent='Please paste content or enter a URL.'; errEl.classList.remove('hidden'); return; }
+  errEl.classList.add('hidden');
+
+  curContent       = isPdf ? '[PDF: '+pdfName+']' : (text||url);
+  curIsFile        = isPdf;
+  extractedPdfText = '';
+  curDisp     = null;
+  curAnalysis = null;
+  appliedRewrites = [];
+  curRewriteDiffs = [];
+  curMeta = {
+    asset:     document.getElementById('sel-asset').value,
+    type:      document.getElementById('sel-type').value,
+    audience:  document.getElementById('sel-aud').value,
+    submitter: document.getElementById('txt-submitter').value || 'Marketing'
+  };
+
+  document.getElementById('analysis-title').textContent = isPdf ? pdfName : (curContent.substring(0,45)+(curContent.length>45?'…':''));
+  document.querySelectorAll('.tnav').forEach(function(b){ b.classList.remove('on'); });
+  goTo('analysis', null);
+  document.getElementById('loading-wrap').classList.remove('hidden');
+  document.getElementById('analysis-wrap').classList.add('hidden');
+
+  var isImage  = isPdf && fileMediaType.startsWith('image/');
+  var isWord   = isPdf && (fileMediaType==='application/msword' || fileMediaType==='application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+  var isRealPdf = isPdf && !isImage && !isWord;
+
+  var msgContent;
+  if (isRealPdf) {
+    // Send PDF natively — Claude reads it directly, no extraction step needed
+    msgContent = [
+      {type:'document', source:{type:'base64', media_type:'application/pdf', data:pdfB64}},
+      {type:'text', text:buildAnalysisPrompt()+'[Analyze the full PDF document above]'}
+    ];
+  } else if (isImage) {
+    msgContent = [
+      {type:'image', source:{type:'base64', media_type:fileMediaType, data:pdfB64}},
+      {type:'text', text:buildAnalysisPrompt()+'[Analyze the marketing content visible in this image]'}
+    ];
+  } else if (isWord) {
+    msgContent = [{type:'text', text:buildAnalysisPrompt()+'A Word document was uploaded ('+pdfName+'). Analyze based on any context available, or note text should be pasted directly.'}];
+  } else {
+    msgContent = buildAnalysisMsgContent((text||url));
+  }
+
+  callApi(msgContent, 2000, ANALYSIS_SYSTEM).then(function(analysisJson) {
+    finishAnalysis(analysisJson);
+  }).catch(function(err) {
+    document.getElementById('loading-wrap').innerHTML='<div style="color:var(--red-dark);font-size:13px;padding:4px 0">Analysis failed: '+esc(err.message)+'</div>';
+  });
+}
+
+function callApi(msgContent, maxTokens, systemPrompt) {
+  var body = {
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: maxTokens,
+    messages: [{role:'user', content: msgContent}]
+  };
+  if (systemPrompt) body.system = systemPrompt;
+  return fetch('/api/analyze', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(body)
+  }).then(function(r) {
+    if (!r.ok) return r.json().then(function(e){ throw new Error(e.error&&e.error.message?e.error.message:'API error '+r.status); });
+    return r.json();
+  }).then(function(d) {
+    var txt = '';
+    if (d.content) for (var i=0;i<d.content.length;i++) { if(d.content[i].type==='text'){txt=d.content[i].text;break;} }
+    return txt;
+  });
+}
+
+function buildAnalysisPrompt() {
+  var flagged = state.precedents.flagged.map(function(p){ return p.phrase; }).join('; ')||'none yet';
+  var passed  = state.precedents.passed.map(function(p){ return p.phrase; }).join('; ')||'none yet';
+  return 'Review this marketing content for compliance issues under FINRA Rule 2210 and NFA Rule 2-29.\n\n'
+    +'Asset class: '+curMeta.asset+'\nCommunication type: '+curMeta.type+'\nAudience: '+curMeta.audience+'\n\n'
+    +'FIRM PRECEDENTS — always flag: '+flagged+'\n'
+    +'FIRM PRECEDENTS — acceptable: '+passed+'\n\n'
+    +'IMPORTANT: The "phrase" field must be verbatim text from the content — exact characters. Used for find-and-replace.\n\n'
+    +'CONTENT TO REVIEW:\n';
+}
+
+var ANALYSIS_SYSTEM = 'You are a securities compliance reviewer. You MUST respond with ONLY a valid JSON object. No preamble, no explanation, no markdown. Just the raw JSON object starting with { and ending with }. Schema: {"score":<0-100>,"verdict":"<PASS|CONDITIONAL_PASS|FAIL>","summary":"<one sentence>","frameworks":["FINRA 2210"],"extractedText":"<first 1500 characters of the submitted content, verbatim>","flags":[{"severity":"<HIGH|MEDIUM|LOW>","phrase":"<verbatim text>","rule":"<cite>","issue":"<brief>","suggestion":"<replacement>"}],"precedent_matches":["<phrase>"]}';
+
+function buildAnalysisMsgContent(textContent) {
+  // Truncate to 2500 chars — enough for compliance review, avoids response length issues
+  var truncated = textContent.substring(0, 2500);
+  if (textContent.length > 2500) truncated += '\n\n[Document continues — analysis covers the above excerpt]';
+  return [{type:'text', text: buildAnalysisPrompt() + truncated}];
+}
+
+function finishAnalysis(rawText) {
+  try {
+    var clean = rawText.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
+    var start = clean.indexOf('{');
+    var end   = clean.lastIndexOf('}');
+    if (start === -1 || end === -1) {
+      document.getElementById('loading-wrap').innerHTML=
+        '<div style="color:var(--red-dark);font-size:13px;padding:4px 0">Analysis returned non-JSON. First 200 chars:<br><code style="font-size:11px;word-break:break-all">'+esc(rawText.substring(0,200))+'</code></div>';
+      return;
+    }
+    var a = JSON.parse(clean.substring(start, end+1));
+    // Use extractedText from response to populate working document for PDF/file submissions
+    if (a.extractedText && a.extractedText.trim()) {
+      extractedPdfText = a.extractedText.trim();
+      curContent = extractedPdfText;
+      curIsFile  = false;
+      var docEl = document.getElementById('rewrite-text');
+      if (docEl && !docEl.value.trim()) {
+        docEl.value = extractedPdfText;
+      }
+    }
+    curAnalysis = a;
+    renderAnalysis(a);
+  } catch(e) {
+    document.getElementById('loading-wrap').innerHTML=
+      '<div style="color:var(--red-dark);font-size:13px;padding:4px 0">Parse error: '+esc(e.message)+'<br><code style="font-size:11px;word-break:break-all">'+esc(rawText.substring(0,300))+'</code></div>';
+  }
+}
+
+function extractPdfTextBackground() {
+  curExtractingPdf = true;
+  var rewriteTxt = document.getElementById('rewrite-text');
+  if (rewriteTxt) rewriteTxt.placeholder = 'Extracting article text from PDF — will appear here automatically…';
+  callApi(
+    [{type:'document', source:{type:'base64', media_type:'application/pdf', data:pdfB64}},
+     {type:'text', text:'Extract the complete text of this document. Return ONLY the plain text with paragraph breaks. No commentary, headers, or formatting markup.'}],
+    6000
+  ).then(function(extracted) {
+    curExtractingPdf = false;
+    if (!extracted || !extracted.trim()) {
+      if (rewriteTxt) rewriteTxt.placeholder = 'Could not extract text automatically — paste the article text here.';
+      return;
+    }
+    extractedPdfText = extracted.trim();
+    curContent = extractedPdfText;
+    curIsFile  = false;
+    if (rewriteTxt && !rewriteTxt.value.trim()) {
+      rewriteTxt.value = extractedPdfText;
+      rewriteTxt.placeholder = 'Article text extracted — edit directly or leave as is.';
+    }
+    // Update doc status
+    var statusEl = document.getElementById('doc-status');
+    if (statusEl && statusEl.textContent.indexOf('Edit') !== -1) {
+      updateFlagProgress();
+    }
+  }).catch(function() {
+    curExtractingPdf = false;
+    if (rewriteTxt) rewriteTxt.placeholder = 'Could not extract text — paste the article text here.';
+  });
+}
+
+function renderAnalysis(a) {
+  document.getElementById('loading-wrap').classList.add('hidden');
+  document.getElementById('analysis-wrap').classList.remove('hidden');
+
+  // Score ring
+  var score = Math.min(100, Math.max(0, a.score||50));
+  var circ  = 2*Math.PI*22;
+  var arc   = document.getElementById('arc');
+  arc.setAttribute('stroke-dasharray', (score/100*circ).toFixed(1)+' '+circ.toFixed(1));
+  arc.setAttribute('stroke', score>=70?'#5a9e3a':score>=45?'#cc8800':'#E22B2B');
+  document.getElementById('arc-num').textContent = score;
+  var v = a.verdict||'';
+  document.getElementById('score-title').textContent =
+    v==='PASS'?'Pass — compliant':v==='CONDITIONAL_PASS'?'Conditional pass — revisions needed':'Fail — requires revision';
+  document.getElementById('score-sub').textContent = a.summary||'';
+  var fw = a.frameworks||['FINRA 2210'];
+  document.getElementById('fw-tags').innerHTML = fw.map(function(f){ return '<span class="fw-tag">'+esc(f)+'</span>'; }).join('');
+
+  // Populate working document textarea
+  var docEl = document.getElementById('rewrite-text');
+  if (docEl) {
+    // extractedText already set on curContent by finishAnalysis if PDF
+    if (curContent && curContent.indexOf('[PDF:') !== 0 && curContent.indexOf('[File:') !== 0) {
+      if (!docEl.value.trim()) docEl.value = curContent;
+      docEl.placeholder = 'Edit directly — your changes will be highlighted for Compliance.';
+    } else {
+      // No text available — prompt to paste
+      docEl.value = '';
+      docEl.placeholder = 'Paste the article text here before sending to Compliance.';
+    }
+  }
+
+  // Flags panel — three-state cards
+  var fw2 = document.getElementById('flags-wrap');
+  var badge = document.getElementById('flag-count-badge');
+  if (!a.flags || !a.flags.length) {
+    if (badge) badge.textContent = '0';
+    fw2.innerHTML = '<div style="padding:32px 16px;text-align:center;color:var(--grey3);font-size:13px">&#10003; No issues found — content appears compliant.</div>';
+  } else {
+    if (badge) badge.textContent = a.flags.length;
+    fw2.innerHTML = a.flags.map(function(f, i) {
+      var sc   = f.severity==='HIGH'?'sev-H':f.severity==='MEDIUM'?'sev-M':'sev-L';
+      var sevL = f.severity==='HIGH'?'High':f.severity==='MEDIUM'?'Medium':'Low';
+      return '<div class="flag2" id="flag2-'+i+'">'
+        +'<div class="flag2-head">'
+        +'<span class="sev '+sc+'">'+sevL+'</span>'
+        +'<div class="flag2-phrase">&ldquo;'+esc(f.phrase)+'&rdquo;</div>'
+        +'</div>'
+        +'<div class="flag2-rule">'+esc(f.rule)+' &mdash; '+esc(f.issue)+'</div>'
+        +'<div class="flag2-suggestion" id="flag2-sug-'+i+'"><strong>Suggested fix</strong>'+esc(f.suggestion)+'</div>'
+        +'<div class="flag2-actions" id="flag2-act-'+i+'">'
+        +'<button class="faction green" onclick="flagUseSuggestion('+i+')">&#10003; Use suggested fix</button>'
+        +'<button class="faction" onclick="flagEditSuggestion('+i+')">&#9998; Edit suggestion</button>'
+        +'<button class="faction" onclick="flagLeaveAsIs('+i+')">&#8212; Leave as is</button>'
+        +'</div>'
+        +'<div class="flag2-status hidden" id="flag2-sta-'+i+'"></div>'
+        +'</div>';
+    }).join('');
+  }
+}
+
+function var_red(){ return '#E22B2B'; }
+
+// ── Flag card actions ───────────────────────────────────────────
+
+function flagApplyToDoc(i, text) {
+  // Apply text into the working document at the flagged phrase location
+  var docEl = document.getElementById('rewrite-text');
+  if (!docEl || !curAnalysis || !curAnalysis.flags[i]) return false;
+  var phrase = curAnalysis.flags[i].phrase;
+  var content = docEl.value;
+  var idx = content.indexOf(phrase);
+  if (idx === -1) idx = content.toLowerCase().indexOf(phrase.toLowerCase());
+  if (idx === -1) {
+    // Phrase not found — append a note and let marketing place it manually
+    toast('Phrase not found in document — edit manually');
+    docEl.focus();
+    return false;
+  }
+  docEl.value = content.substring(0, idx) + text + content.substring(idx + phrase.length);
+  // Flash the textarea border green
+  docEl.style.borderColor = '#5a9e3a';
+  setTimeout(function(){ docEl.style.borderColor = ''; }, 800);
+  return true;
+}
+
+function flagSetState(i, state, statusHTML) {
+  var card = document.getElementById('flag2-'+i);
+  var act  = document.getElementById('flag2-act-'+i);
+  var sta  = document.getElementById('flag2-sta-'+i);
+  if (!card) return;
+  card.className = 'flag2 ' + (state==='fixed'?'state-fixed':'state-acknowledged');
+  if (act) act.innerHTML = '<button class="faction" onclick="flagReset('+i+')">&#8635; Undo</button>';
+  if (sta) { sta.innerHTML = statusHTML; sta.classList.remove('hidden'); }
+}
+
+function flagReset(i) {
+  var card = document.getElementById('flag2-'+i);
+  var act  = document.getElementById('flag2-act-'+i);
+  var sta  = document.getElementById('flag2-sta-'+i);
+  var sug  = document.getElementById('flag2-sug-'+i);
+  if (!card || !curAnalysis || !curAnalysis.flags[i]) return;
+  var f = curAnalysis.flags[i];
+  card.className = 'flag2';
+  if (sta) { sta.innerHTML = ''; sta.classList.add('hidden'); }
+  if (sug) { sug.style.display = ''; }
+  if (act) act.innerHTML =
+    '<button class="faction green" onclick="flagUseSuggestion('+i+')">&#10003; Use suggested fix</button>'
+    +'<button class="faction" onclick="flagEditSuggestion('+i+')">&#9998; Edit suggestion</button>'
+    +'<button class="faction" onclick="flagLeaveAsIs('+i+')">&#8212; Leave as is</button>';
+  updateFlagProgress();
+}
+
+function flagUseSuggestion(i) {
+  if (!curAnalysis || !curAnalysis.flags[i]) return;
+  var suggestion = curAnalysis.flags[i].suggestion;
+  flagApplyToDoc(i, suggestion);
+  flagSetState(i, 'fixed',
+    '<span style="color:#2a5a10">&#10003; Fixed — suggestion applied to document</span>');
+  updateFlagProgress();
+}
+
+function flagEditSuggestion(i) {
+  if (!curAnalysis || !curAnalysis.flags[i]) return;
+  var sug  = document.getElementById('flag2-sug-'+i);
+  var act  = document.getElementById('flag2-act-'+i);
+  var suggestion = curAnalysis.flags[i].suggestion;
+  // Show editable textarea with the suggestion pre-filled
+  if (sug) sug.style.display = 'none';
+  if (act) act.innerHTML =
+    '<textarea class="flag2-edit-area" id="flag2-edit-'+i+'">'+esc(suggestion)+'</textarea>'
+    +'<div style="display:flex;gap:5px;margin-top:6px">'
+    +'<button class="faction primary" onclick="flagApplyEdit('+i+')">Apply to document</button>'
+    +'<button class="faction" onclick="flagReset('+i+')">Cancel</button>'
+    +'</div>';
+}
+
+function flagApplyEdit(i) {
+  var editEl = document.getElementById('flag2-edit-'+i);
+  if (!editEl) return;
+  var text = editEl.value.trim();
+  if (!text) { toast('Edited text is empty'); return; }
+  flagApplyToDoc(i, text);
+  flagSetState(i, 'fixed',
+    '<span style="color:#2a5a10">&#10003; Fixed — edited suggestion applied to document</span>');
+  updateFlagProgress();
+}
+
+function flagLeaveAsIs(i) {
+  var act = document.getElementById('flag2-act-'+i);
+  if (!act) return;
+  // Show note field
+  act.innerHTML =
+    '<input type="text" id="flag2-note-'+i+'" placeholder="Optional: reason for leaving as-is (visible to Compliance)"'
+    +' style="width:100%;font-size:11px;padding:5px 8px;border:1px solid var(--grey2);border-radius:var(--r6);font-family:var(--font);outline:none;margin-bottom:5px">'
+    +'<div style="display:flex;gap:5px">'
+    +'<button class="faction" onclick="flagConfirmLeave('+i+')">Confirm — leave as is</button>'
+    +'<button class="faction" onclick="flagReset('+i+')">Cancel</button>'
+    +'</div>';
+}
+
+function flagConfirmLeave(i) {
+  var noteEl = document.getElementById('flag2-note-'+i);
+  var note = noteEl ? noteEl.value.trim() : '';
+  flagSetState(i, 'acknowledged',
+    '<span style="color:var(--grey4)">&#8212; Left as is'+(note?' &mdash; <em>'+esc(note)+'</em>':'')+'</span>');
+  // Store note on the flag for compliance to see
+  if (curAnalysis && curAnalysis.flags[i]) curAnalysis.flags[i]._leaveNote = note;
+  updateFlagProgress();
+}
+
+function updateFlagProgress() {
+  if (!curAnalysis || !curAnalysis.flags) return;
+  var total    = curAnalysis.flags.length;
+  var resolved = 0;
+  curAnalysis.flags.forEach(function(f, i) {
+    var sta = document.getElementById('flag2-sta-'+i);
+    if (sta && !sta.classList.contains('hidden')) resolved++;
+  });
+  var statusEl = document.getElementById('doc-status');
+  if (!statusEl) return;
+  if (resolved === total) {
+    statusEl.innerHTML = '<span style="color:#2a5a10;font-weight:600">&#10003; All '+total+' flags addressed — ready to send</span>';
+  } else {
+    statusEl.innerHTML = (total - resolved)+' of '+total+' flags unaddressed';
+  }
+}
+
+function logDecision(i, verdict) {
+  if (!curAnalysis||!curAnalysis.flags) return;
+  var flag=curAnalysis.flags[i]; if (!flag) return;
+  var vf=document.getElementById('vf-'+i), vp=document.getElementById('vp-'+i);
+  if (verdict==='flagged') {
+    if(vf) vf.className='vbtn flagged'; if(vp) vp.className='vbtn';
+    var ex=null;
+    for(var j=0;j<state.precedents.flagged.length;j++) { if(state.precedents.flagged[j].phrase===flag.phrase){ex=state.precedents.flagged[j];break;} }
+    if(ex){ex.count++;}else{state.precedents.flagged.push({phrase:flag.phrase,rule:flag.rule,count:1,rationale:flag.issue});}
+  } else {
+    if(vp) vp.className='vbtn passed'; if(vf) vf.className='vbtn';
+    var ex2=null;
+    for(var k=0;k<state.precedents.passed.length;k++) { if(state.precedents.passed[k].phrase===flag.phrase){ex2=state.precedents.passed[k];break;} }
+    if(ex2){ex2.count++;}else{state.precedents.passed.push({phrase:flag.phrase,rule:flag.rule,count:1,rationale:'Marked acceptable by compliance'});}
+  }
+  state.decisions++; refreshLearn(); saveState();
+  toast(verdict==='flagged'?'Added to flagged patterns':'Marked acceptable — precedent saved');
+}
+
+function queueDisp(qid, d, btn) {
+  var prefix = 'qdb-';
+  var revBtn = document.getElementById(prefix+'revision-'+qid);
+  var appBtn = document.getElementById(prefix+'approved-'+qid);
+  if (revBtn) revBtn.className = 'dbtn';
+  if (appBtn) appBtn.className = 'dbtn';
+  btn.className = 'dbtn active-'+d;
+  btn._dispVal = d;
+}
+
+function submitQueueDisp(qid) {
+  var revBtn = document.getElementById('qdb-revision-'+qid);
+  var appBtn = document.getElementById('qdb-approved-'+qid);
+  var noteEl = document.getElementById('qnote-'+qid);
+  var d = (revBtn && revBtn._dispVal) ? revBtn._dispVal
+        : (appBtn && appBtn._dispVal) ? appBtn._dispVal : null;
+  if (!d) { toast('Select a disposition first'); return; }
+  var note = noteEl ? noteEl.value.trim() : '';
+  if (d === 'revision' && !note) { toast('Please add revision notes for marketing'); return; }
+  for (var i=0; i<state.queue.length; i++) {
+    if (state.queue[i].id === qid) {
+      state.queue[i].status = d;
+      state.queue[i].note   = note;
+      state.queue[i].date   = today();
+      break;
+    }
+  }
+  refreshBadges(); saveState(); renderQueue();
+  toast(d==='approved' ? 'Approved ✓' : 'Revision requested — sent to marketing');
+}
+
+function sendToRevQueue() {
+  if (curExtractingPdf) { toast('Still extracting PDF text — please wait a moment'); return; }
+  var docEl      = document.getElementById('rewrite-text');
+  var editedText = docEl ? docEl.value.trim() : '';
+
+  // Last resort: if textarea still empty but curContent was populated by extraction, use it
+  if (!editedText && curContent && curContent.indexOf('[PDF:') !== 0 && curContent.indexOf('[File:') !== 0) {
+    editedText = curContent;
+    if (docEl) docEl.value = curContent;
+  }
+  // Also try extractedPdfText directly
+  if (!editedText && extractedPdfText) {
+    editedText = extractedPdfText;
+    if (docEl) docEl.value = extractedPdfText;
+  }
+
+  if (!editedText) {
+    toast('Paste the article text into the Working Document before sending');
+    if (docEl) docEl.focus();
+    return;
+  }
+
+  var originalText = (curContent && curContent.indexOf('[PDF:') !== 0 && curContent.indexOf('[File:') !== 0 && curContent !== editedText)
+    ? curContent : '';
+  var rewrites = computeDiff(originalText, editedText);
+
+  // Capture flag decisions for compliance visibility
+  var flagDecisions = [];
+  if (curAnalysis && curAnalysis.flags) {
+    curAnalysis.flags.forEach(function(f, i) {
+      var sta = document.getElementById('flag2-sta-'+i);
+      var card = document.getElementById('flag2-'+i);
+      var decision = 'unaddressed';
+      if (card && card.classList.contains('state-fixed')) decision = 'fixed';
+      if (card && card.classList.contains('state-acknowledged')) decision = 'left-as-is';
+      flagDecisions.push({
+        severity: f.severity,
+        phrase:   f.phrase,
+        rule:     f.rule,
+        decision: decision,
+        note:     f._leaveNote || ''
+      });
+    });
+  }
+
+  var item = {
+    id:           'q'+Date.now(),
+    title:        (pdfName || curContent.substring(0,55)) + ((!pdfName && curContent.length>55)?'…':''),
+    submitter:    curMeta.submitter||'Marketing',
+    type:         curMeta.type,
+    asset:        curMeta.asset,
+    status:       'pending',
+    score:        curAnalysis ? curAnalysis.score : 0,
+    flags:        curAnalysis && curAnalysis.flags ? curAnalysis.flags.length : 0,
+    date:         today(),
+    note:         '',
+    isResub:      false,
+    articleText:  editedText,
+    originalText: originalText,
+    rawContent:   originalText,
+    analysis:     curAnalysis,
+    rewrites:     rewrites,
+    flagDecisions: flagDecisions
+  };
+  state.queue.unshift(item);
+  refreshBadges(); saveState();
+  toast('Sent to Pending Compliance Review');
+  setTimeout(function(){ goTo('queue', document.getElementById('tnav-queue')); }, 600);
+}
+
+// Compute word-level diff between two texts
+// Returns array of {original, revised, rule} for changed sentences/phrases
+function computeDiff(original, edited) {
+  if (!original || !edited || original === edited) return [];
+  var rewrites = [];
+  // Split into sentences for comparison
+  var origSents = original.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [original];
+  var editSents = edited.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [edited];
+  var used = {};
+  origSents.forEach(function(os) {
+    var ot = os.trim();
+    if (!ot) return;
+    // Find best match in edited
+    var found = false;
+    for (var i=0; i<editSents.length; i++) {
+      if (used[i]) continue;
+      if (editSents[i].trim() === ot) { used[i]=true; found=true; break; }
+    }
+    if (!found) {
+      // Find closest unmatched edited sentence (same rough position)
+      var idx = origSents.indexOf(os);
+      var candidate = editSents[idx] && !used[idx] ? editSents[idx].trim() : null;
+      if (candidate && candidate !== ot) {
+        used[idx] = true;
+        rewrites.push({ original: ot, revised: candidate, rule: 'Marketing edit' });
+      }
+    }
+  });
+  return rewrites;
+}
+
+
+function switchQueue(tab, btn) {
+  curQueueTab=tab;
+  document.querySelectorAll('.qtab').forEach(function(b){ b.classList.remove('on','red-tab'); });
+  btn.classList.add('on');
+  if (tab==='revision') btn.classList.add('red-tab');
+  renderQueueBody();
+}
+
+function renderQueue() {
+  refreshBadges();
+  renderQueueBody();
+}
+
+function renderQueueBody() {
+  var items = state.queue.filter(function(q){ return q.status===curQueueTab; });
+  var el = document.getElementById('queue-body');
+  if (!items.length) {
+    el.innerHTML='<div style="text-align:center;padding:48px;color:var(--grey3);font-size:13px">'
+      +(curQueueTab==='revision'?'No revision requests outstanding.'
+       :curQueueTab==='pending'?'No items pending compliance review.'
+       :'No approved items yet.')+'</div>';
+    return;
+  }
+  el.innerHTML = items.map(function(q) {
+    var dotColor = q.status==='pending'?'var(--grey3)':q.status==='revision'?'var(--red)':'#5a9e3a';
+
+    // Status tag
+    var statusTag = '';
+    if (q.status==='pending')  statusTag='<span class="qtag action-comp">Compliance to action</span>';
+    if (q.status==='revision') statusTag='<span class="qtag action-mkt">Marketing to action</span>';
+    if (q.status==='approved') statusTag='<span class="qtag approved">&#10003; Approved</span>';
+
+    var resubTag = q.isResub ? '<span class="qtag resub">Resubmission</span>' : '';
+    var rewriteTag = (q.rewrites && q.rewrites.length)
+      ? '<span class="qtag" style="background:#e8f5e0;border-color:#b0dd90;color:#2a5a10">&#9999; '+q.rewrites.length+' revision'+(q.rewrites.length!==1?'s':'')+' by Marketing</span>'
+      : '';
+
+    // Compliance notes — shown prominently for revision items
+    var notesBlock = '';
+    if (q.status === 'revision' && q.note) {
+      notesBlock = '<div style="margin-top:10px;padding:10px 14px;background:#fdf0f0;border-left:3px solid var(--red);border-radius:0 var(--r6) var(--r6) 0">'
+        +'<div style="font-size:10px;font-weight:600;color:var(--red-dark);letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px">Compliance notes</div>'
+        +'<div style="font-size:13px;color:var(--black);line-height:1.6">'+esc(q.note)+'</div>'
+        +'</div>';
+    }
+    if (q.status === 'approved' && q.note) {
+      notesBlock = '<div style="margin-top:10px;padding:10px 14px;background:#f0f7e8;border-left:3px solid #5a9e3a;border-radius:0 var(--r6) var(--r6) 0">'
+        +'<div style="font-size:10px;font-weight:600;color:#2a5a10;letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px">Compliance notes</div>'
+        +'<div style="font-size:13px;color:var(--black);line-height:1.6">'+esc(q.note)+'</div>'
+        +'</div>';
+    }
+
+    // Preview button
+    var previewBtn = q.articleText
+      ? '<button class="btn sm" onclick="openPreviewFromQueue(\''+q.id+'\')">&#128065; Preview</button>'
+      : '';
+
+    // Make revisions button for revision items
+    var reviseBtn = (q.status === 'revision')
+      ? '<button class="btn sm primary" onclick="openRevisionWorkspace(\''+q.id+'\')">&#9998; Make revisions</button>'
+      : '';
+
+    // Compliance disposition bar — only for pending items
+    var dispBar = '';
+    if (q.status === 'pending') {
+      dispBar = '<div style="padding:12px 16px;border-top:1px solid var(--grey1);background:var(--grey0);display:flex;gap:8px;align-items:center;flex-wrap:wrap">'
+        +'<span style="font-size:11px;font-weight:600;color:var(--grey4);text-transform:uppercase;letter-spacing:.04em">Compliance action:</span>'
+        +'<button class="dbtn" id="qdb-revision-'+q.id+'" onclick="queueDisp(\''+q.id+'\',\'revision\',this)">Request revision</button>'
+        +'<button class="dbtn" id="qdb-approved-'+q.id+'" onclick="queueDisp(\''+q.id+'\',\'approved\',this)">Approve</button>'
+        +'<input type="text" id="qnote-'+q.id+'" placeholder="Notes for Marketing (required to request revision)" style="flex:1;min-width:200px;font-size:12px;padding:6px 10px;border:1px solid var(--grey2);border-radius:var(--r6);font-family:var(--font);outline:none;background:var(--white)">'
+        +'<button class="btn sm primary" onclick="submitQueueDisp(\''+q.id+'\')">Submit &#8594;</button>'
+        +'</div>';
+    }
+
+    return '<div style="border-bottom:1px solid var(--grey1)">'
+      // Main row
+      +'<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px">'
+        +'<div style="margin-top:5px;flex-shrink:0"><div style="width:8px;height:8px;border-radius:50%;background:'+dotColor+'"></div></div>'
+        +'<div style="flex:1;min-width:0">'
+          +'<div style="font-size:13px;font-weight:500;margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(q.title)+'</div>'
+          +'<div style="font-size:11px;color:var(--grey4);margin-bottom:6px">'+esc(q.submitter)+' &middot; '+esc(q.type)+' &middot; '+esc(q.date)+'</div>'
+          +'<div style="display:flex;gap:6px;flex-wrap:wrap">'+statusTag+resubTag+rewriteTag+'</div>'
+          +notesBlock
+        +'</div>'
+        +'<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0">'
+          +'<div style="font-size:11px;color:var(--grey4)">'+q.flags+' flag'+(q.flags!==1?'s':'')+' &middot; '+q.score+'/100</div>'
+          +previewBtn
+          +reviseBtn
+        +'</div>'
+      +'</div>'
+      +dispBar
+      +'</div>';
+  }).join('');
+}
+
+function renderPrec() {
+  document.getElementById('p-total').textContent=state.decisions;
+  document.getElementById('p-flagged').textContent=state.precedents.flagged.length;
+  document.getElementById('p-passed').textContent=state.precedents.passed.length;
+  function rList(arr,verdict){
+    if(!arr.length) return '<div style="text-align:center;padding:20px;color:var(--grey3);font-size:13px">None yet.</div>';
+    return arr.map(function(p){
+      var sc=verdict==='flagged'?'sev-H':'sev-L', sl=verdict==='flagged'?'FLAGGED':'PASSED';
+      return '<div class="prec-card"><div class="prec-phrase">&ldquo;'+esc(p.phrase)+'&rdquo;</div>'
+        +'<div class="prec-row"><span class="sev '+sc+'">'+sl+'</span><span class="tag">'+esc(p.rule)+'</span>'
+        +'<span style="font-size:11px;color:var(--grey3)">'+p.count+'&times;</span>'
+        +'<span class="prec-rat">'+esc(p.rationale)+'</span></div></div>';
+    }).join('');
+  }
+  document.getElementById('list-flagged').innerHTML=rList(state.precedents.flagged,'flagged');
+  document.getElementById('list-passed').innerHTML=rList(state.precedents.passed,'passed');
+}
+
+function resetPrec() {
+  if(!confirm('Reset precedent library to defaults?')) return;
+  var d=defaultState(); state.precedents=d.precedents; state.decisions=d.decisions;
+  refreshLearn(); saveState(); renderPrec(); toast('Precedent library reset');
+}
+
+function exportData() {
+  var blob=new Blob([JSON.stringify({precedents:state.precedents,queue:state.queue,decisions:state.decisions,exported:new Date().toISOString()},null,2)],{type:'application/json'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='compliance-'+new Date().toISOString().split('T')[0]+'.json'; a.click();
+}
+
+function xmlEsc(s){ if(!s)return''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;'); }
+
+function exportDocx() {
+  var content=document.getElementById('rewrite-text').value;
+  var title=curContent.substring(0,60)||'Compliance Review';
+  var date=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  var xml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><?mso-application progid="Word.Document"?>'
+    +'<w:wordDocument xmlns:w="http://schemas.microsoft.com/office/word/2003/wordml"><w:body>'
+    +'<w:p><w:pPr><w:pStyle w:val="Heading1"/></w:pPr><w:r><w:t>'+xmlEsc(title.substring(0,80))+'</w:t></w:r></w:p>'
+    +'<w:p><w:r><w:rPr><w:color w:val="666666"/><w:sz w:val="20"/></w:rPr><w:t>Compliance review — '+xmlEsc(date)+' | '+xmlEsc(curMeta.submitter||'')+'</w:t></w:r></w:p>'
+    +'<w:p><w:r><w:t>---</w:t></w:r></w:p>';
+  content.split(/\n+/).forEach(function(p){ if(p.trim()) xml+='<w:p><w:r><w:t xml:space="preserve">'+xmlEsc(p.trim())+'</w:t></w:r></w:p>'; });
+  if(appliedRewrites.length) xml+='<w:p><w:r><w:rPr><w:color w:val="3a6010"/><w:b/></w:rPr><w:t>'+appliedRewrites.length+' compliance rewrite(s) applied</w:t></w:r></w:p>';
+  xml+='</w:body></w:wordDocument>';
+  var blob=new Blob([xml],{type:'application/msword'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='compliance-revised-'+new Date().toISOString().split('T')[0]+'.doc'; a.click();
+  toast('Word document downloaded');
+}
+
+function exportPdf() {
+  var content=document.getElementById('rewrite-text').value;
+  var title=curContent.substring(0,80)||'Compliance Review';
+  var date=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  var paras=content.split(/\n+/).filter(function(p){return p.trim();});
+  var win=window.open('','_blank');
+  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+esc(title)+'</title>'
+    +'<style>body{font-family:Georgia,serif;font-size:12pt;line-height:1.8;max-width:700px;margin:40px auto;color:#111;padding:0 20px}'
+    +'h1{font-size:16pt;font-weight:bold;margin-bottom:6px}p{margin-bottom:12px}'
+    +'.meta{font-size:10pt;color:#666;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid #ccc}'
+    +'.note{margin-top:24px;padding:10px 14px;background:#f0f7e8;border-left:3px solid #5a9e3a;font-size:10pt;color:#3a6010}'
+    +'@media print{body{margin:20px}}</style></head><body>'
+    +'<h1>'+esc(title)+'</h1>'
+    +'<div class="meta">'+esc(date)+' &nbsp;|&nbsp; '+esc(curMeta.submitter||'')+'</div>'
+    +paras.map(function(p){return '<p>'+esc(p.trim())+'</p>';}).join('')
+    +(appliedRewrites.length?'<div class="note">'+appliedRewrites.length+' compliance rewrite(s) applied</div>':'')
+    +'</body></html>');
+  win.document.close(); win.focus();
+  setTimeout(function(){win.print();},400);
+  toast('PDF print dialog opened');
+}
+
+// ── Revision workspace ─────────────────────────────────────────
+var revQueueId = null;
+var revAppliedRewrites = [];
+
+function openRevisionWorkspace(qid) {
+  var item = null;
+  for (var i=0; i<state.queue.length; i++) { if (state.queue[i].id===qid){item=state.queue[i];break;} }
+  if (!item) { toast('Item not found'); return; }
+  revQueueId = qid;
+  revAppliedRewrites = [];
+
+  document.getElementById('revision-title').textContent = item.title || 'Revision workspace';
+  document.getElementById('revision-notes-text').textContent = item.note || '(No notes provided)';
+
+  // Score banner
+  var a = item.analysis;
+  if (a) {
+    var score = Math.min(100, Math.max(0, a.score||50));
+    var circ  = 2*Math.PI*22;
+    var rarc  = document.getElementById('rev-arc');
+    rarc.setAttribute('stroke-dasharray',(score/100*circ).toFixed(1)+' '+circ.toFixed(1));
+    rarc.setAttribute('stroke', score>=70?'#5a9e3a':score>=45?'#cc8800':'#E22B2B');
+    document.getElementById('rev-arc-num').textContent = score;
+    document.getElementById('rev-score-title').textContent =
+      a.verdict==='PASS'?'Pass — compliant':a.verdict==='CONDITIONAL_PASS'?'Conditional pass':'Fail — requires revision';
+    document.getElementById('rev-score-sub').textContent = a.summary||'';
+    var fw = a.frameworks||['FINRA 2210'];
+    document.getElementById('rev-fw-tags').innerHTML = fw.map(function(f){ return '<span class="fw-tag">'+esc(f)+'</span>'; }).join('');
+  }
+
+  // Render original flags with apply rewrite
+  var fw2 = document.getElementById('rev-flags-wrap');
+  if (!a || !a.flags || !a.flags.length) {
+    fw2.innerHTML = '<div style="text-align:center;padding:20px;color:var(--grey3);font-size:13px">No flags from original review.</div>';
+  } else {
+    fw2.innerHTML = a.flags.map(function(f,i){
+      var sc = f.severity==='HIGH'?'sev-H':f.severity==='MEDIUM'?'sev-M':'sev-L';
+      return '<div class="flag"><div class="flag-hd" onclick="toggleRevFlag('+i+')">'
+        +'<span class="sev '+sc+'">'+esc(f.severity)+'</span>'
+        +'<div style="flex:1"><div class="flag-phrase">&ldquo;'+esc(f.phrase)+'&rdquo;</div>'
+        +'<div class="flag-rule">'+esc(f.rule)+' &mdash; '+esc(f.issue)+'</div></div>'
+        +'<span class="flag-chev" id="rev-chev-'+i+'">&#9662;</span></div>'
+        +'<div class="flag-bd" id="rev-fbd-'+i+'">'
+        +'<div class="fix-label">Suggested rewrite <span style="font-weight:400;color:var(--grey3);text-transform:none;letter-spacing:0">— edit before applying</span></div>'
+        +'<textarea class="fix-edit" id="rev-fix-'+i+'" rows="3" spellcheck="true">'+esc(f.suggestion)+'</textarea>'
+        +'<div class="action-row">'
+        +'<button class="vbtn" id="rev-vr-'+i+'" onclick="applyRevRewrite('+i+')">&#9999; Apply rewrite</button>'
+        +'</div></div></div>';
+    }).join('');
+  }
+
+  // Pre-populate article text
+  var txt = document.getElementById('rev-rewrite-text');
+  var articleText = item.articleText || item.rawContent || '';
+  txt.value = articleText;
+  txt.placeholder = articleText ? 'Edit your article here.' : 'Paste your article text here.';
+
+  // Unlock apply buttons if text present
+  txt.oninput = function() { updateRevApplyButtons(txt.value.trim().length > 0); };
+  updateRevApplyButtons(articleText.length > 0);
+
+  document.getElementById('rev-rewrite-count').textContent = '';
+  document.getElementById('rev-rewrite-badge').classList.add('hidden');
+
+  document.querySelectorAll('.tnav').forEach(function(b){ b.classList.remove('on'); });
+  goTo('revision', null);
+}
+
+function updateRevApplyButtons(hasText) {
+  var a = null;
+  for (var i=0; i<state.queue.length; i++) { if (state.queue[i].id===revQueueId){a=state.queue[i].analysis;break;} }
+  if (!a || !a.flags) return;
+  a.flags.forEach(function(f, i) {
+    var vr = document.getElementById('rev-vr-'+i);
+    if (!vr || vr.classList.contains('applied')) return;
+    vr.disabled = !hasText;
+    vr.style.opacity = hasText ? '1' : '.4';
+    vr.style.cursor  = hasText ? 'pointer' : 'default';
+    vr.innerHTML = hasText ? '&#9999; Apply rewrite' : '&#128274; Apply rewrite';
+  });
+}
+
+function toggleRevFlag(i) {
+  var bd=document.getElementById('rev-fbd-'+i), ch=document.getElementById('rev-chev-'+i);
+  var open=bd.classList.toggle('open');
+  if(ch) ch.style.transform=open?'rotate(180deg)':'';
+}
+
+function applyRevRewrite(i) {
+  var item = null;
+  for (var j=0; j<state.queue.length; j++) { if(state.queue[j].id===revQueueId){item=state.queue[j];break;} }
+  if (!item || !item.analysis || !item.analysis.flags) return;
+  var flag = item.analysis.flags[i]; if (!flag) return;
+  var txt    = document.getElementById('rev-rewrite-text');
+  var fixEl  = document.getElementById('rev-fix-'+i);
+  var current    = txt.value;
+  var phrase     = flag.phrase;
+  var suggestion = fixEl ? fixEl.value.trim() : flag.suggestion;
+  if (!current.trim()) { toast('Paste your article text first'); txt.focus(); return; }
+  if (!suggestion)     { toast('Rewrite is empty'); return; }
+  var idx = current.indexOf(phrase);
+  if (idx === -1) idx = current.toLowerCase().indexOf(phrase.toLowerCase());
+  if (idx === -1) {
+    txt.focus(); txt.style.borderColor='var(--red)';
+    setTimeout(function(){txt.style.borderColor='';},1500);
+    toast('Phrase not found — place cursor and paste manually'); return;
+  }
+  txt.value = current.substring(0,idx) + suggestion + current.substring(idx+phrase.length);
+  var vr = document.getElementById('rev-vr-'+i);
+  if (vr) { vr.innerHTML='&#10003; Applied'; vr.className='vbtn applied'; vr.disabled=true; }
+  if (revAppliedRewrites.indexOf(i)===-1) revAppliedRewrites.push(i);
+  document.getElementById('rev-rewrite-badge').classList.remove('hidden');
+  document.getElementById('rev-rewrite-count').textContent = revAppliedRewrites.length+' rewrite'+(revAppliedRewrites.length!==1?'s':'')+' applied';
+  txt.style.borderColor='#5a9e3a';
+  setTimeout(function(){txt.style.borderColor='';},800);
+  toast('Rewrite applied');
+}
+
+function resetRevisionRewrites() {
+  var item = null;
+  for (var i=0; i<state.queue.length; i++) { if(state.queue[i].id===revQueueId){item=state.queue[i];break;} }
+  if (!item) return;
+  revAppliedRewrites = [];
+  document.getElementById('rev-rewrite-text').value = item.articleText || item.rawContent || '';
+  document.getElementById('rev-rewrite-badge').classList.add('hidden');
+  document.getElementById('rev-rewrite-count').textContent = '';
+  if (item.analysis && item.analysis.flags) {
+    item.analysis.flags.forEach(function(f,i){
+      var vr=document.getElementById('rev-vr-'+i);
+      if(vr){vr.innerHTML='&#9999; Apply rewrite';vr.className='vbtn';vr.disabled=false;}
+    });
+  }
+  toast('Reset to original');
+}
+
+function buildRevRewriteDiffs() {
+  var diffs = [];
+  var item = null;
+  for (var i=0; i<state.queue.length; i++) { if(state.queue[i].id===revQueueId){item=state.queue[i];break;} }
+  if (!item || !item.analysis || !item.analysis.flags) return diffs;
+  revAppliedRewrites.forEach(function(i) {
+    var f = item.analysis.flags[i]; if (!f) return;
+    var fixEl = document.getElementById('rev-fix-'+i);
+    diffs.push({ original:f.phrase, revised: fixEl?fixEl.value.trim():f.suggestion, rule:f.rule||'' });
+  });
+  return diffs;
+}
+
+function resubmitToCompliance() {
+  var txt = document.getElementById('rev-rewrite-text').value.trim();
+  if (!txt) { toast('Add your revised article text before resubmitting'); return; }
+  var rewrites = buildRevRewriteDiffs();
+  // Update existing queue item
+  for (var i=0; i<state.queue.length; i++) {
+    if (state.queue[i].id === revQueueId) {
+      state.queue[i].status      = 'pending';
+      state.queue[i].isResub     = true;
+      state.queue[i].date        = today();
+      state.queue[i].note        = '';
+      state.queue[i].articleText = txt;
+      state.queue[i].rewrites    = rewrites;
+      // move to front
+      var item = state.queue.splice(i,1)[0];
+      state.queue.unshift(item);
+      break;
+    }
+  }
+  refreshBadges(); saveState();
+  toast('Resubmitted to Compliance Review');
+  setTimeout(function(){ goTo('queue',document.getElementById('tnav-queue')); }, 600);
+}
+
+function buildRewriteDiffs() {
+  var docEl = document.getElementById('rewrite-text');
+  var edited = docEl ? docEl.value.trim() : '';
+  var original = (!curContent.startsWith('[PDF:') && !curContent.startsWith('[File:')) ? curContent : '';
+  return computeDiff(original, edited);
+}
+
+function openPreview(articleText, rewrites, title, complianceNote, flagDecisions) {
+  var overlay = document.getElementById('preview-overlay');
+  overlay.style.display = 'flex';
+  var cleanTitle = (title||'Document review').replace(/^\[PDF:\s*/,'').replace(/\]$/,'');
+  document.getElementById('preview-title').textContent = cleanTitle;
+
+  var rewriteCount = rewrites && rewrites.length ? rewrites.length : 0;
+  var parts = [];
+  if (rewriteCount) parts.push(rewriteCount + ' Marketing revision' + (rewriteCount !== 1 ? 's' : ''));
+  if (complianceNote) parts.push('Compliance notes');
+  document.getElementById('preview-status-bar').textContent = parts.join(' · ') || 'Original submission';
+
+  var docPane   = document.getElementById('preview-doc-pane');
+  var annotPane = document.getElementById('preview-annotations');
+  docPane.innerHTML   = '';
+  annotPane.innerHTML = '';
+
+  // ── Document pane: always show extracted text, never an iframe ──
+  var hasText = articleText && articleText.trim()
+    && articleText.indexOf('[PDF:') !== 0
+    && articleText.indexOf('[File:') !== 0;
+
+  var wrapper = document.createElement('div');
+  wrapper.style.cssText = 'max-width:740px;margin:0 auto;padding:48px 56px 80px;background:#fff;min-height:100%;box-shadow:0 0 60px rgba(0,0,0,0.35)';
+
+  // Document title
+  var hdr = document.createElement('div');
+  hdr.style.cssText = 'font-size:11px;font-weight:600;color:#999;letter-spacing:.07em;text-transform:uppercase;padding-bottom:14px;border-bottom:1px solid #eee;margin-bottom:28px';
+  hdr.textContent = title || 'Article';
+  wrapper.appendChild(hdr);
+
+  if (!hasText) {
+    var msg = document.createElement('div');
+    msg.style.cssText = 'text-align:center;padding:60px 0;color:#bbb';
+    msg.innerHTML = '<div style="font-size:40px;margin-bottom:16px">&#128196;</div>'
+      + '<div style="font-size:14px;font-weight:500;color:#999;margin-bottom:8px">Article text not yet available</div>'
+      + '<div style="font-size:12px;line-height:1.7">PDF text is still being extracted in the background.<br>'
+      + 'Once ready, close this preview and reopen it, or paste the text<br>into the Revised Article panel first.</div>';
+    wrapper.appendChild(msg);
+    docPane.appendChild(wrapper);
+  } else {
+    // Mark rewrites in raw text BEFORE escaping
+    var working = articleText;
+    var slots = [];
+    if (rewrites && rewrites.length) {
+      rewrites.forEach(function(r, ri) {
+        if (!r.revised || !r.revised.trim()) return;
+        var needle = r.revised.trim();
+        var idx = working.indexOf(needle);
+        if (idx === -1) {
+          idx = working.toLowerCase().indexOf(needle.toLowerCase());
+          if (idx !== -1) needle = working.substring(idx, idx + needle.length);
+        }
+        if (idx === -1) return;
+        var token = '|||R' + ri + '|||';
+        slots.push({ token: token, text: needle, rule: r.rule || '', idx: ri });
+        working = working.substring(0, idx) + token + working.substring(idx + needle.length);
+      });
+    }
+
+    var safe = esc(working);
+
+    slots.forEach(function(sl) {
+      var highlight = '<mark style="background:#c8f0d0;padding:2px 5px;border-radius:4px;'
+        + 'border:1.5px solid #5a9e3a;color:#1a3a08;font-weight:500;cursor:default"'
+        + ' title="Revised by Marketing — see annotations panel">'
+        + esc(sl.text)
+        + '<sup style="font-size:9px;background:#5a9e3a;color:#fff;padding:0 4px;border-radius:20px;'
+        + 'margin-left:4px;font-weight:700;vertical-align:super">M'+(sl.idx+1)+'</sup>'
+        + '</mark>';
+      safe = safe.split(sl.token).join(highlight);
+    });
+
+    var content = document.createElement('div');
+    content.style.cssText = 'font-family:Georgia,serif;font-size:14px;line-height:1.95;color:#111';
+    safe.split(/\n+/).forEach(function(p) {
+      if (!p.trim()) return;
+      var para = document.createElement('p');
+      para.style.marginBottom = '18px';
+      para.innerHTML = p.trim();
+      content.appendChild(para);
+    });
+    wrapper.appendChild(content);
+    docPane.appendChild(wrapper);
+  }
+
+  // ── Annotations pane ──
+  // Legend
+  var legend = '<div style="padding:10px 16px;background:#f9f9f9;border-bottom:1px solid var(--grey1);font-size:11px;color:var(--grey4);display:flex;gap:14px;flex-wrap:wrap">'
+    + '<span style="display:flex;align-items:center;gap:5px"><span style="display:inline-block;width:10px;height:10px;background:#c8f0d0;border:1.5px solid #5a9e3a;border-radius:2px"></span>Marketing revision</span>'
+    + '<span style="display:flex;align-items:center;gap:5px"><span style="display:inline-block;width:10px;height:10px;background:#fdf0f0;border:1.5px solid var(--red);border-radius:2px"></span>Compliance note</span>'
+    + '</div>';
+  annotPane.innerHTML = legend;
+
+  var hasAnnotations = false;
+
+  // Compliance notes — top of annotations
+  if (complianceNote) {
+    hasAnnotations = true;
+    annotPane.innerHTML += '<div style="margin:12px;padding:12px 14px;background:#fdf0f0;border:1.5px solid #f0b0b0;border-radius:8px">'
+      + '<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">'
+      + '<span style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0"></span>'
+      + '<span style="font-size:10px;font-weight:700;color:var(--red-dark);letter-spacing:.06em;text-transform:uppercase">Compliance revision notes</span>'
+      + '</div>'
+      + '<div style="font-size:13px;color:#111;line-height:1.65">' + esc(complianceNote) + '</div>'
+      + '</div>';
+  }
+
+  // Marketing revisions — numbered to match superscripts in document
+  if (rewrites && rewrites.length) {
+    hasAnnotations = true;
+    rewrites.forEach(function(r, i) {
+      annotPane.innerHTML += '<div style="margin:10px 12px;padding:12px 14px;background:#f0faf3;border:1.5px solid #a0d8b0;border-radius:8px">'
+        + '<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">'
+        + '<span style="width:18px;height:18px;border-radius:50%;background:#5a9e3a;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">M'+(i+1)+'</span>'
+        + '<span style="font-size:10px;font-weight:700;color:#2a5a10;letter-spacing:.05em;text-transform:uppercase">Marketing revision '+(i+1)+'</span>'
+        + (r.rule ? '<span style="font-size:10px;color:#5a9e3a;margin-left:auto;font-weight:500">'+esc(r.rule)+'</span>' : '')
+        + '</div>'
+        + (r.original ? '<div style="font-size:12px;color:#999;margin-bottom:5px;font-style:italic;padding:4px 8px;background:#fff;border-radius:4px;border-left:2px solid #ccc"><span style="font-size:9px;font-weight:600;color:#bbb;letter-spacing:.04em;text-transform:uppercase;display:block;margin-bottom:2px">Original</span>'+esc(r.original)+'</div>' : '')
+        + '<div style="font-size:12px;color:#111;line-height:1.55;padding:4px 8px;background:#fff;border-radius:4px;border-left:2px solid #5a9e3a"><span style="font-size:9px;font-weight:600;color:#5a9e3a;letter-spacing:.04em;text-transform:uppercase;display:block;margin-bottom:2px">Revised to</span>'+esc(r.revised)+'</div>'
+        + '</div>';
+    });
+  }
+
+  // Marketing flag decisions — what marketing did with each flag
+  if (item && item.flagDecisions && item.flagDecisions.length) {
+    var fixed = item.flagDecisions.filter(function(d){ return d.decision==='fixed'; });
+    var left  = item.flagDecisions.filter(function(d){ return d.decision==='left-as-is'; });
+    var open  = item.flagDecisions.filter(function(d){ return d.decision==='unaddressed'; });
+
+    if (fixed.length) {
+      annotPane.innerHTML += '<div style="margin:10px 12px 0;padding:8px 12px;background:#f0faf3;border:1px solid #a0d8b0;border-radius:6px">'
+        +'<div style="font-size:10px;font-weight:700;color:#2a5a10;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px">&#10003; Fixed by Marketing ('+fixed.length+')</div>'
+        +fixed.map(function(d){ return '<div style="font-size:11px;color:#111;padding:3px 0;border-top:1px solid #d0ecd8">&ldquo;'+esc(d.phrase)+'&rdquo;</div>'; }).join('')
+        +'</div>';
+    }
+    if (left.length) {
+      annotPane.innerHTML += '<div style="margin:10px 12px 0;padding:8px 12px;background:#f9f9f9;border:1px solid var(--grey2);border-radius:6px">'
+        +'<div style="font-size:10px;font-weight:700;color:var(--grey4);letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px">&#8212; Left as is ('+left.length+')</div>'
+        +left.map(function(d){ return '<div style="font-size:11px;color:#111;padding:3px 0;border-top:1px solid var(--grey1)">&ldquo;'+esc(d.phrase)+'&rdquo;'+(d.note?' &mdash; <em style="color:var(--grey4)">'+esc(d.note)+'</em>':'')+'</div>'; }).join('')
+        +'</div>';
+    }
+    if (open.length) {
+      annotPane.innerHTML += '<div style="margin:10px 12px 0;padding:8px 12px;background:#fdf0f0;border:1px solid #f0b0b0;border-radius:6px">'
+        +'<div style="font-size:10px;font-weight:700;color:var(--red-dark);letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px">&#128683; Not addressed ('+open.length+')</div>'
+        +open.map(function(d){ return '<div style="font-size:11px;color:#111;padding:3px 0;border-top:1px solid #f0c0c0">&ldquo;'+esc(d.phrase)+'&rdquo;</div>'; }).join('')
+        +'</div>';
+    }
+    hasAnnotations = true;
+  }
+
+  if (!hasAnnotations) {
+    annotPane.innerHTML += '<div style="padding:40px 16px;text-align:center;color:var(--grey3);font-size:12px">No annotations on this submission</div>';
+  }
+}
+
+function openPreviewFromAnalysis() {
+  var rewriteEl   = document.getElementById('rewrite-text');
+  var articleText = rewriteEl && rewriteEl.value.trim() ? rewriteEl.value.trim() : curContent;
+  var rewrites    = buildRewriteDiffs();
+  var title       = pdfName || curContent.substring(0, 60) || 'Article preview';
+  var flagDecisions = [];
+  if (curAnalysis && curAnalysis.flags) {
+    curAnalysis.flags.forEach(function(f, i) {
+      var card = document.getElementById('flag2-'+i);
+      var decision = 'unaddressed';
+      if (card && card.classList.contains('state-fixed')) decision = 'fixed';
+      if (card && card.classList.contains('state-acknowledged')) decision = 'left-as-is';
+      flagDecisions.push({ severity:f.severity, phrase:f.phrase, rule:f.rule, decision:decision, note:f._leaveNote||'' });
+    });
+  }
+  openPreview(articleText, rewrites, title, null, flagDecisions);
+}
+
+function openPreviewFromQueue(qid) {
+  var item = null;
+  for (var i=0; i<state.queue.length; i++) { if (state.queue[i].id===qid){item=state.queue[i];break;} }
+  if (!item) { toast('Item not found'); return; }
+  var articleText = item.articleText || item.rawContent || '';
+  var note = (item.status==='revision'||item.status==='approved') ? item.note : null;
+  openPreview(articleText, item.rewrites, item.title, note, item.flagDecisions||[]);
+}
+
+function openPreviewFromRevision() {
+  var txt      = document.getElementById('rev-rewrite-text').value;
+  var rewrites = buildRevRewriteDiffs();
+  var item     = null;
+  for (var i=0; i<state.queue.length; i++) { if(state.queue[i].id===revQueueId){item=state.queue[i];break;} }
+  var title    = item ? item.title : 'Article preview';
+  var note     = item ? item.note : null;
+  openPreview(txt, rewrites, title, note, item && item.flagDecisions ? item.flagDecisions : []);
+}
+
+function closePreview() {
+  document.getElementById('preview-overlay').style.display = 'none';
+}
+
+function exportDocxFromPreview() { closePreview(); exportDocx(); }
+function exportPdfFromPreview()  { closePreview(); exportPdf(); }
+
+
+// Boot
+refreshLearn();
+refreshBadges();
+</script>
+</body>
+</html>
